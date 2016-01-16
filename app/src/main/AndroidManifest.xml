@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.project.saadadeel.CompetiFit">
+
+    <application
+        android:allowBackup="true"
+        android:debuggable="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="com.project.saadadeel.CompetiFit.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.project.saadadeel.CompetiFit.Tutorial"
+            android:label="@string/title_activity_tutorial"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.project.saadadeel.CompetiFit.SignUp"
+            android:label="@string/title_activity_sign_up"
+            android:theme="@style/AppTheme"></activity>
+    </application>
+
+</manifest>
