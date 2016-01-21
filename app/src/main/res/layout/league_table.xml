@@ -1,5 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Longitude"
+        android:id="@+id/longitudeText"
+        android:layout_alignParentTop="true"
+        android:textSize="60sp"
+        android:textAlignment="center"
+        android:textColor="@color/colorBackground"
+        android:background="@color/colorPrimary"
+        android:paddingTop="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=" "
+        android:id="@+id/longitude"
+        android:layout_below="@+id/longitudeText"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textColor="@color/colorBackground"
+        android:background="@color/colorPrimary"
+        android:paddingTop="20dp"
+        android:paddingBottom="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Latitude"
+        android:id="@+id/latitudeText"
+        android:textSize="60sp"
+        android:textAlignment="center"
+        android:layout_below="@+id/longitude"
+        android:textColor="@color/colorBackground"
+        android:background="@color/colorPrimary"
+        android:paddingTop="20dp"
+        android:layout_marginTop="30dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=" "
+        android:id="@+id/latitude"
+        android:layout_below="@+id/latitudeText"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textColor="@color/colorBackground"
+        android:background="@color/colorPrimary"
+        android:paddingTop="20dp"
+        android:paddingBottom="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Ilford"
+        android:id="@+id/IlfordText"
+        android:textSize="60sp"
+        android:textAlignment="center"
+        android:layout_below="@+id/latitude"
+        android:textColor="@color/colorBackground"
+        android:background="@color/colorPrimary"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=" "
+        android:id="@+id/ilford"
+        android:layout_below="@+id/IlfordText"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textColor="@color/colorBackground"
+        android:background="@color/colorPrimary"
+        android:paddingTop="20dp"
+        android:paddingBottom="10dp"/>
 
 </RelativeLayout>

@@ -48,6 +48,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void mainPage(View view) {
+        // Handle event when Login Button is clicked
+        if (isLogin("email", "password")) {
+            Intent intent = new Intent(this, UserMain.class);
+            startActivity(intent);
+        }
+    }
+
     public boolean isLogin(String username, String password) {
         // Handle event when Login Button is clicked
         if(username.equals("email") && password.equals("password")){
@@ -55,6 +63,4 @@ public class MainActivity extends AppCompatActivity {
         }
         else return false;
     }
-
-
 }

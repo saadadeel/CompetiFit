@@ -1,5 +1,242 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
 
-</RelativeLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollView01"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:scrollbars="none"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.project.saadadeel.CompetiFit.Performance">
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="57 pts"
+                android:id="@+id/textView"
+                android:layout_alignParentTop="true"
+                android:textSize="60sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorBackground"
+                android:background="@color/colorPrimary"
+                android:paddingTop="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="80Km @ 11Km/h"
+                android:id="@+id/KmAndSpeed"
+                android:layout_below="@+id/textView"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorBackground"
+                android:background="@color/colorPrimary"
+                android:paddingTop="20dp"
+                android:paddingBottom="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Races"
+                android:id="@+id/racesTitle"
+                android:layout_below="@+id/KmAndSpeed"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text_material_light"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="W W W L W"
+                android:id="@+id/racesResults"
+                android:layout_below="@+id/racesTitle"
+                android:textSize="30sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:paddingTop="10dp"
+                android:paddingBottom="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Runs"
+                android:id="@+id/runTitle"
+                android:layout_below="@+id/racesResults"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text_material_light"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="10 January 2015"
+                android:id="@+id/runDate"
+                android:layout_below="@+id/runTitle"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="10Km @ 10Km/hr"
+                android:id="@+id/run"
+                android:layout_below="@+id/runDate"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text_material_light"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="11 January 2015"
+                android:id="@+id/runDatee"
+                android:layout_below="@+id/run"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="11Km @ 11Km/hr"
+                android:id="@+id/run1"
+                android:layout_below="@+id/runDatee"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text_material_light"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="12 January 2015"
+                android:id="@+id/runDate1"
+                android:layout_below="@+id/run1"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="12Km @ 12Km/hr"
+                android:id="@+id/run2"
+                android:layout_below="@+id/runDate1"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text_material_light"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="13 January 2015"
+                android:id="@+id/runDate2"
+                android:layout_below="@+id/run2"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="13Km @ 13Km/hr"
+                android:id="@+id/run3"
+                android:layout_below="@+id/runDate2"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text_material_light"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="14 January 2015"
+                android:id="@+id/runDate3"
+                android:layout_below="@+id/run3"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="14Km @ 14Km/hr"
+                android:id="@+id/run4"
+                android:layout_below="@+id/runDate3"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text_material_light"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="15 January 2015"
+                android:id="@+id/runDate4"
+                android:layout_below="@+id/run4"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="15Km @ 1Km/hr"
+                android:id="@+id/run5"
+                android:layout_below="@+id/runDate4"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text_material_light"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>
+
