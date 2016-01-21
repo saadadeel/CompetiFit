@@ -34,6 +34,9 @@
             android:name=".UserMain"
             android:label="@string/title_activity_user_main"
             android:theme="@style/AppTheme" />
+        <activity android:name=".Pop"
+            android:theme="@style/AppTheme.custom"
+            />
     </application>
 
 </manifest>

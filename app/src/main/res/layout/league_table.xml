@@ -1,85 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollView01"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:scrollbars="none"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.project.saadadeel.CompetiFit.LeagueTable">
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
-    <TextView
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tableLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Longitude"
-        android:id="@+id/longitudeText"
-        android:layout_alignParentTop="true"
-        android:textSize="60sp"
-        android:textAlignment="center"
-        android:textColor="@color/colorBackground"
-        android:background="@color/colorPrimary"
-        android:paddingTop="20dp"/>
-
-    <TextView
+        android:layout_height="match_parent"
+        android:shrinkColumns="*"
+        android:stretchColumns="*">
+    <TableRow
+        android:id="@+id/row1"
+        android:layout_height="500dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=" "
-        android:id="@+id/longitude"
-        android:layout_below="@+id/longitudeText"
-        android:textSize="20sp"
-        android:textAlignment="center"
-        android:textColor="@color/colorBackground"
-        android:background="@color/colorPrimary"
-        android:paddingTop="20dp"
-        android:paddingBottom="10dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Latitude"
-        android:id="@+id/latitudeText"
-        android:textSize="60sp"
-        android:textAlignment="center"
-        android:layout_below="@+id/longitude"
-        android:textColor="@color/colorBackground"
-        android:background="@color/colorPrimary"
-        android:paddingTop="20dp"
-        android:layout_marginTop="30dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=" "
-        android:id="@+id/latitude"
-        android:layout_below="@+id/latitudeText"
-        android:textSize="20sp"
-        android:textAlignment="center"
-        android:textColor="@color/colorBackground"
-        android:background="@color/colorPrimary"
-        android:paddingTop="20dp"
-        android:paddingBottom="10dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Ilford"
-        android:id="@+id/IlfordText"
-        android:textSize="60sp"
-        android:textAlignment="center"
-        android:layout_below="@+id/latitude"
-        android:textColor="@color/colorBackground"
-        android:background="@color/colorPrimary"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=" "
-        android:id="@+id/ilford"
-        android:layout_below="@+id/IlfordText"
-        android:textSize="20sp"
-        android:textAlignment="center"
-        android:textColor="@color/colorBackground"
-        android:background="@color/colorPrimary"
-        android:paddingTop="20dp"
-        android:paddingBottom="10dp"/>
-
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:elevation="2dp">
+        <TextView
+            android:id="@+id/position1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="1."
+            android:textColor="@color/primary_text_material_dark"
+            android:layout_marginLeft="1dp"
+            android:gravity="top"></TextView>
+        <TextView
+            android:id="@+id/name1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="Saad Adeel"
+            android:gravity="top"
+            android:textColor="@color/primary_text_material_dark"></TextView>
+        <TextView
+            android:id="@+id/points"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="50sp"
+            android:text="24 pts"
+            android:gravity="right"
+            android:textColor="@color/primary_text_material_dark"></TextView>
+    </TableRow>
+</TableLayout>
 </RelativeLayout>
+    </ScrollView>

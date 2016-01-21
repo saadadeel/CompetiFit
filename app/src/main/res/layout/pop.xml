@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#3d3737">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Distance Ran"
+        android:id="@+id/DistanceText"
+        android:textSize="60sp"
+        android:textAlignment="center"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/colorBackground"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/dist"
+        android:layout_below="@+id/DistanceText"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textColor="@color/colorBackground"
+        android:paddingTop="100dp"
+        android:paddingBottom="10dp"
+        android:layout_centerVertical="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:id="@+id/button"
+        android:layout_marginBottom="89dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#e05252" />
+</RelativeLayout>

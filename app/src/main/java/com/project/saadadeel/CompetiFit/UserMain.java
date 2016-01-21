@@ -1,5 +1,7 @@
 package com.project.saadadeel.CompetiFit;
 
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
@@ -59,6 +61,7 @@ public class UserMain extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startActivity(new Intent(UserMain.this,Pop.class));
             }
         });
     }
