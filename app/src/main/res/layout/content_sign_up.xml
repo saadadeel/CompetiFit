@@ -36,13 +36,15 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
+        android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/emailInput"
-        android:text="Email Address"
+        android:id="@+id/usernameInput"
         android:layout_marginTop="50dp"
         android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:hint="Username"
+        android:ellipsize="end"
+        android:textColorHint="@color/greyLight"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -50,27 +52,34 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/passwordInput"
-        android:layout_below="@+id/textView2"
-        android:layout_alignLeft="@+id/emailInput"
-        android:layout_alignStart="@+id/emailInput"
-        android:layout_marginTop="10dp" />
+        android:layout_below="@+id/usernameInput"
+        android:layout_alignLeft="@+id/usernameInput"
+        android:layout_alignStart="@+id/usernameInput"
+        android:layout_marginTop="10dp"
+        android:hint="Password"
+        android:ellipsize="end"
+        android:textColorHint="@color/greyLight"/>
 
-    <TextView
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="8 characters minimum password:"
-        android:id="@+id/textView2"
-        android:layout_marginTop="44dp"
-        android:layout_below="@+id/emailInput"
-        android:layout_centerHorizontal="true" />
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/passwordRepeatInput"
+        android:layout_below="@+id/passwordInput"
+        android:layout_alignLeft="@+id/usernameInput"
+        android:layout_alignStart="@+id/usernameInput"
+        android:layout_marginTop="10dp"
+        android:hint="Repeat Password"
+        android:ellipsize="end"
+        android:textColorHint="@color/greyLight"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next"
         android:id="@+id/nextPageButton"
-        android:layout_below="@+id/passwordInput"
+        android:layout_below="@+id/passwordRepeatInput"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:onClick="nextPage"/>

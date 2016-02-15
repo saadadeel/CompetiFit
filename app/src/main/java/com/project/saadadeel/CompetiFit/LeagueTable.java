@@ -1,30 +1,41 @@
 package com.project.saadadeel.CompetiFit;
 
-        import android.graphics.Color;
+        import android.annotation.TargetApi;
+        import android.os.Build;
         import android.os.Bundle;
+        import android.os.Parcelable;
         import android.support.annotation.Nullable;
         import android.support.v4.app.Fragment;
         import android.view.Gravity;
         import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
-        import android.widget.Button;
         import android.widget.TableLayout;
         import android.widget.TableRow;
         import android.widget.TextView;
 
-        import org.w3c.dom.Text;
+        import com.project.saadadeel.CompetiFit.connection.User;
 
 public class LeagueTable extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.league_table, container, false);
+        populate(v);
         setTable(v);
         return v;
-
     }
 
+    public void populate(View v){
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            User u = bundle.getParcelable("User");
+            TextView first = (TextView) v.findViewById(R.id.name1);
+            first.setText(u.getUsername());
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void setTable(View view) {
         TableLayout table = (TableLayout) view.findViewById(R.id.tableLayout1);
 
@@ -64,13 +75,12 @@ public class LeagueTable extends Fragment {
 
             points.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
             tr.addView(points);
-            tr.setPadding(0,40,0,40);
+            tr.setPadding(0, 40, 0, 40);
             tr.setClickable(true);
-
+            tr.setBackgroundColor(getResources().getColor(R.color.colorForeground));
+            tr.setBottom(40);
             //tr.setBackgroundResource(R.drawable.sf_gradient_03);
             table.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
         }
     }
 }
-
-

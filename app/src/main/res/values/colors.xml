@@ -12,4 +12,6 @@
     <color name="secondary_text_material_dark">#1f1f1f</color>
     <color name="primary_text_material_light">#363636</color>
     <color name="colorBackground">#f7efef</color>
+    <color name="colorForeground">#ffffff</color>
+    <color name="greyLight">#a4a4a4</color>
 </resources>

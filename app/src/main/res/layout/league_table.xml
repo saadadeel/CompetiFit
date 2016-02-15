@@ -26,7 +26,8 @@
         android:layout_width="match_parent"
         android:gravity="center_horizontal"
         android:layout_marginTop="10dp"
-        android:elevation="2dp">
+        android:elevation="2dp"
+        android:background="@color/colorForeground">
         <TextView
             android:id="@+id/position1"
             android:layout_width="wrap_content"
@@ -35,7 +36,8 @@
             android:text="1."
             android:textColor="@color/primary_text_material_dark"
             android:layout_marginLeft="1dp"
-            android:gravity="top"></TextView>
+            android:gravity="top"
+            android:background="@drawable/border"></TextView>
         <TextView
             android:id="@+id/name1"
             android:layout_width="match_parent"
