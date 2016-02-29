@@ -1,18 +1,24 @@
-package com.project.saadadeel.CompetiFit;
+package com.project.saadadeel.CompetiFit.RunTracker;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-/**
- * Created by saadadeel on 21/01/2016.
- */
-public class Pop extends Activity{
+import com.project.saadadeel.CompetiFit.R;
+
+public class Running extends Fragment {
 
     TextView textLong;
     TextView textLat;
@@ -23,31 +29,18 @@ public class Pop extends Activity{
     Boolean turn = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setView();
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.content_running, container, false);
 
 //      textLong = (TextView) getWindow().findViewById(R.id.longitude);
-        textLat = (TextView) getWindow().findViewById(R.id.DistanceText);
-        textDistance = (TextView) getWindow().findViewById(R.id.dist);
+        textLat = (TextView) v.findViewById(R.id.DistanceText);
+        textDistance = (TextView) v.findViewById(R.id.dist);
         runTracker();
-
-    }
-
-    public void setView(){
-        setContentView(R.layout.pop);
-
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
-
-        getWindow().setLayout((int) (width * 0.9), (int) (height * 0.9));
+        return v;
     }
 
     public void runTracker() {
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         LocationListener ll = new LocationListener();
 
         try {
@@ -69,7 +62,7 @@ public class Pop extends Activity{
                 double pLat = location.getLatitude();
 
                 textLat.setText(Double.toString(pLat));
-               // textLong.setText(Double.toString(pLong));
+                // textLong.setText(Double.toString(pLong));
 
                 distanceTravelled+=newLocation.distanceTo(oldLocation);
 //                float distance = location.distanceTo(Ilford);
@@ -83,6 +76,8 @@ public class Pop extends Activity{
                 oldLocation.set(newLocation);
 
                 distanceTravelled+=newLocation.distanceTo(oldLocation);
+
+                System.out.println(distanceTravelled);
 
                 textDistance.setText(Double.toString(distanceTravelled));
 

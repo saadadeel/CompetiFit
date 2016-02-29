@@ -1,29 +1,15 @@
-package com.project.saadadeel.CompetiFit;
+package com.project.saadadeel.CompetiFit.ScrollingPageAdapter;
 
-        import android.os.AsyncTask;
-        import android.os.Parcel;
-        import android.os.Parcelable;
         import android.support.v4.app.Fragment;
         import android.support.v4.app.FragmentManager;
         import android.support.v4.app.FragmentStatePagerAdapter;
-        import android.view.View;
-        import android.widget.TextView;
-        import android.support.v7.app.AppCompatActivity;
         import android.os.Bundle;
 
-        import com.google.gson.Gson;
-        import com.project.saadadeel.CompetiFit.connection.DBConnect;
+        import com.project.saadadeel.CompetiFit.LeagueTable;
+        import com.project.saadadeel.CompetiFit.Performance;
+        import com.project.saadadeel.CompetiFit.Race;
         import com.project.saadadeel.CompetiFit.connection.User;
-
-        import java.io.BufferedReader;
-        import java.io.IOException;
-        import java.io.InputStreamReader;
-        import java.io.Serializable;
-        import java.net.HttpURLConnection;
-        import java.net.MalformedURLException;
-        import java.net.URL;
-        import java.util.logging.Level;
-        import java.util.logging.Logger;
+        import com.project.saadadeel.CompetiFit.profile;
 
 /**
  * Created by hp1 on 21-01-2015.
@@ -41,15 +27,21 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter{
         this.Titles = mTitles;
         this.NumbOfTabs = mNumbOfTabsumb;
         this.user = user;
-
+//        startUserUpdateSocket();
     }
+
+//    public void startUserUpdateSocket(){
+//
+//    }
 
     //This method return the fragment for the every position in the View Pager
     @Override
     public Fragment getItem(int position) {
-//        System.out.println("////////////////////////" + user.getUsername() + "///////////////");
+
         Bundle args = new Bundle();
         args.putParcelable("User", user);
+        args.putParcelableArrayList("userRaces", user.getRaces());
+        args.putParcelableArrayList("userRuns", user.getRuns());
 
         if(position == 0 && user!=null) // if the position is 0 we are returning the First tab
         {
@@ -65,9 +57,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter{
         }
         if(position == 2)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {
-            profile pView = new profile();
-            pView.setArguments(args);
-            return pView;
+            Race rView = new Race();
+            rView.setArguments(args);
+            return rView;
         }
         else           // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {

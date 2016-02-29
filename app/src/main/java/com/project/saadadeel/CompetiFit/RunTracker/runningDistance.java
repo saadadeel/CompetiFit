@@ -1,4 +1,4 @@
-package com.project.saadadeel.CompetiFit;
+package com.project.saadadeel.CompetiFit.RunTracker;
 
 import android.content.Context;
 import android.location.LocationManager;

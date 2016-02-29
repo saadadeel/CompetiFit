@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.project.saadadeel.CompetiFit.connection.DBConnect;
+import com.project.saadadeel.CompetiFit.connection.DBResponse;
 import com.project.saadadeel.CompetiFit.connection.User;
 
 import org.json.JSONException;
@@ -29,11 +31,12 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DBResponse{
 
     public String username;
     public String password;
     public Boolean auth;
+    public User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,13 +86,11 @@ public class MainActivity extends AppCompatActivity {
         this.password = Pword.getText().toString();
 
         new login().execute();
-//        TextView status = (TextView) view.findViewById(R.id.loginStatus);
-//        status.setText("Login information is incorrect");
     }
 
     public void showMain(){
         Intent intent = new Intent(this, UserMain.class);
-        intent.putExtra("username", getUsername());
+        intent.putExtra("username", this.username);
         startActivity(intent);
     }
 
@@ -101,9 +102,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void setPermissionDenied(){this.auth = false;}
 
+    @Override
+    public void processFinish(User u) {
+
+    }
+
     ///////////////// Connect to Database /////////////////////////
 
-    class login extends AsyncTask<String, Void, String> {
+   class login extends AsyncTask<String, Void, String> {
 
         User usr;
 
@@ -119,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("//////////////////////////////////////");
             Boolean loggedIn = null;
             try {
-                loggedIn = postData("http://178.62.68.172:32815/login/submit", 8000);
+                loggedIn = postData("http://178.62.68.172:32821/login/submit", 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -165,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
                 wr.write(cred.toString());
                 wr.flush();
 
-               // urlConnection.connect();
                 int status = urlConnection.getResponseCode();
 
 
@@ -183,11 +188,6 @@ public class MainActivity extends AppCompatActivity {
                         return true;
 
                     case 400:
-//                        while ((line = br.readLine()) != null) {
-//                            sb.append(line+"\n");
-//                        }
-//                        br.close();
-//                        System.out.print(sb.toString());
                         return false;
                 }
 

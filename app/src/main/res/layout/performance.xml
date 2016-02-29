@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="57 pts"
-                android:id="@+id/textView"
+                android:id="@+id/score"
                 android:layout_alignParentTop="true"
                 android:textSize="60sp"
                 android:textAlignment="center"
@@ -37,7 +37,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="80Km @ 11Km/h"
                 android:id="@+id/KmAndSpeed"
-                android:layout_below="@+id/textView"
+                android:layout_below="@+id/score"
                 android:textSize="20sp"
                 android:textAlignment="center"
                 android:textColor="@color/colorBackground"
@@ -71,20 +71,40 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="20dp"/>
 
-            <TextView
+            <TableLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/runs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Runs"
-                android:id="@+id/runTitle"
                 android:layout_below="@+id/racesResults"
-                android:textSize="20sp"
-                android:textAlignment="center"
-                android:textColor="@color/primary_text_material_light"
-                android:paddingTop="30dp"
-                android:paddingBottom="20dp"/>
+                android:shrinkColumns="*"
+                android:stretchColumns="*">
 
-            <TextView
+            <TableRow
+                android:id="@+id/row1"
+                android:layout_height="500dp"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:elevation="2dp"
+                android:background="@color/colorForeground">
+
+                <TextView
+                    android:id="@+id/position1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:textSize="30sp"
+                    android:text="Runs"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="1dp"
+                    android:gravity="center"></TextView>
+
+            </TableRow>
+            </TableLayout>
+
+            <!--TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
@@ -234,7 +254,7 @@
                 android:textAlignment="center"
                 android:textColor="@color/primary_text_material_light"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp"/>
+                android:paddingBottom="10dp" -->
 
         </RelativeLayout>
     </LinearLayout>

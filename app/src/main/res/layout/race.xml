@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollView01"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:scrollbars="none"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.project.saadadeel.CompetiFit.Performance">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/racesDue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="*"
+        android:stretchColumns="*">
+
+        <TableRow
+            android:id="@+id/row1"
+            android:layout_height="500dp"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:elevation="2dp"
+            android:background="@color/colorForeground">
+
+        <TextView
+            android:id="@+id/position1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textSize="30sp"
+            android:text="Races"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginLeft="1dp"
+            android:gravity="center"></TextView>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/racesRecieved"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:layout_below="@+id/racesDue">
+
+    <TableRow
+        android:id="@+id/row2"
+        android:layout_height="500dp"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:elevation="2dp"
+        android:background="@color/colorForeground">
+
+        <TextView
+            android:id="@+id/position2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textSize="30sp"
+            android:text="Recieved"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginLeft="1dp"
+            android:gravity="center"></TextView>
+
+    </TableRow>
+
+</TableLayout>
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/racesSent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:layout_below="@+id/racesRecieved">
+
+        <TableRow
+        android:id="@+id/row3"
+        android:layout_height="500dp"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:elevation="2dp"
+        android:background="@color/colorForeground">
+
+            <TextView
+                android:id="@+id/position3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:textSize="30sp"
+                android:text="Pending"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginLeft="1dp"
+                android:gravity="center"></TextView>
+
+        </TableRow>
+
+    </TableLayout>
+
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/racesCompleted"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:layout_below="@+id/racesSent">
+
+        <TableRow
+            android:id="@+id/row4"
+            android:layout_height="500dp"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:elevation="2dp"
+            android:background="@color/colorBackground">
+
+            <TextView
+                android:id="@+id/position4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:textSize="30sp"
+                android:text="Completed"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginLeft="1dp"
+                android:gravity="center"></TextView>
+
+        </TableRow>
+
+    </TableLayout>
+
+</RelativeLayout>
+
+</ScrollView>
