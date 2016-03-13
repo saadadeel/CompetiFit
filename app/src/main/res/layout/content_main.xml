@@ -14,6 +14,14 @@
     android:id="@+id/signUp"
     android:backgroundTint="#ffffff">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/loginStatus"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +32,7 @@
         android:background="#ffffff"
         android:textSize="25sp"
         android:textColor="#000000"
-        android:hint="Email address"
+        android:hint="Username"
         android:ellipsize="end"
         android:textColorHint="@color/greyLight"
         android:layout_marginTop="98dp"
@@ -73,14 +81,6 @@
         android:layout_below="@+id/loginButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/loginStatus"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

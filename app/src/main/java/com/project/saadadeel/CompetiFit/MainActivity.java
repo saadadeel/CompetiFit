@@ -3,8 +3,6 @@ package com.project.saadadeel.CompetiFit;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -13,10 +11,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.project.saadadeel.CompetiFit.connection.DBConnect;
-import com.project.saadadeel.CompetiFit.connection.DBResponse;
-import com.project.saadadeel.CompetiFit.connection.User;
+import com.project.saadadeel.CompetiFit.Models.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +26,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MainActivity extends AppCompatActivity implements DBResponse{
+public class MainActivity extends AppCompatActivity{
 
     public String username;
     public String password;
@@ -94,6 +89,11 @@ public class MainActivity extends AppCompatActivity implements DBResponse{
         startActivity(intent);
     }
 
+    public void setAuthDenied(){
+        TextView loginStatus = (TextView)findViewById(R.id.loginStatus);
+        loginStatus.setText("Password incorrect");
+    }
+
     public String getUsername(){return this.username;}
 
     public String getPassword(){return this.password;}
@@ -101,11 +101,6 @@ public class MainActivity extends AppCompatActivity implements DBResponse{
     public void setPermissionAllowed(){this.auth = true;}
 
     public void setPermissionDenied(){this.auth = false;}
-
-    @Override
-    public void processFinish(User u) {
-
-    }
 
     ///////////////// Connect to Database /////////////////////////
 
@@ -125,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements DBResponse{
             System.out.println("//////////////////////////////////////");
             Boolean loggedIn = null;
             try {
-                loggedIn = postData("http://178.62.68.172:32821/login/submit", 8000);
+                loggedIn = postData("http://178.62.68.172:32838/login/submit", 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -143,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements DBResponse{
             if(auth) {
                 showMain();
             }else{
-
+                setAuthDenied();
             }
         }
 
@@ -172,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements DBResponse{
                 wr.flush();
 
                 int status = urlConnection.getResponseCode();
-
 
                 switch (status) {
                     case 200:

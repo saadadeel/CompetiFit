@@ -1,29 +1,15 @@
 package com.project.saadadeel.CompetiFit;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Spinner;
 
 import com.project.saadadeel.CompetiFit.connection.DBConnect;
-import com.project.saadadeel.CompetiFit.connection.User;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.project.saadadeel.CompetiFit.Models.User;
 
 public class SignUp extends AppCompatActivity {
 
@@ -32,12 +18,18 @@ public class SignUp extends AppCompatActivity {
     String fName;
     String lName;
     String password;
+    int level;
+    Spinner spinner;
+    Spinner spinner1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        this.spinner = (Spinner)findViewById(R.id.spinner);
+        this.spinner1 = (Spinner)findViewById(R.id.spinner1);
         setSupportActionBar(toolbar);
     }
 
@@ -66,7 +58,21 @@ public class SignUp extends AppCompatActivity {
         EditText Lname = (EditText) findViewById(R.id.lnameInput);
         this.lName = Lname.getText().toString();
 
-        this.user = new User(username, password, fName, lName);
+        int dist = Integer.parseInt(spinner.getSelectedItem().toString());
+        int time = Integer.parseInt(spinner1.getSelectedItem().toString());
+
+        this.levelSetter(dist, time);
+
+        this.user = new User(username, password, fName, lName, level);
+    }
+
+    public void levelSetter(int distance, int time){
+        if(distance<=1){
+            this.level = 2;
+        }
+        if(distance>1 && distance <=3){
+            this.level = 4;
+        }
     }
 }
 

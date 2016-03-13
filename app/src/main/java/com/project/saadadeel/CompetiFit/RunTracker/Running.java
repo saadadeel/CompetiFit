@@ -33,7 +33,7 @@ public class Running extends Fragment {
         View v = inflater.inflate(R.layout.content_running, container, false);
 
 //      textLong = (TextView) getWindow().findViewById(R.id.longitude);
-        textLat = (TextView) v.findViewById(R.id.DistanceText);
+//        textLat = (TextView) v.findViewById(R.id.DistanceText);
         textDistance = (TextView) v.findViewById(R.id.dist);
         runTracker();
         return v;

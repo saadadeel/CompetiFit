@@ -1,7 +1,9 @@
-package com.project.saadadeel.CompetiFit.connection;
+package com.project.saadadeel.CompetiFit.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import java.util.UUID;
 
 /**
  * Created by saadadeel on 22/02/2016.
@@ -13,15 +15,21 @@ public class Races implements Parcelable{
     public String competitorUsername;
 
     public int challengedMiles;
-    public int challengedTime;
-    public Boolean isChallengeMet;
+    public Double challengedSpeed;
+    public Boolean isComplete;
+    public int completedMiles;
+    public Double completedSpeed;
     public int speedChallengeCompleted;
+
+    public int points;
 
     public Races(){}
 
     public Races(String cUN){
         this.status = "pending";
         this.competitorUsername = cUN;
+        String uniqueID = UUID.randomUUID().toString();
+        this.id = uniqueID;
     }
 
     public Races(String st, String cUN){
@@ -36,8 +44,9 @@ public class Races implements Parcelable{
         id = in.readString();
         competitorUsername = in.readString();
         challengedMiles = in.readInt();
-        challengedTime = in.readInt();
+        challengedSpeed = in.readDouble();
         speedChallengeCompleted = in.readInt();
+        points = in.readInt();
     }
 
     public static final Creator<Races> CREATOR = new Creator<Races>() {
@@ -52,16 +61,23 @@ public class Races implements Parcelable{
         }
     };
 
-    public void challengeAccepted(int miles, int time){
+    public void challengeAccepted(int miles, Double speed){
         this.status = "active";
         this.challengedMiles = miles;
-        this.challengedTime = time;
+        this.challengedSpeed = speed;
     }
 
     public String getCUsername(){
         return this.competitorUsername;
     }
     public String getStatus(){return this.status;}
+    public String getId(){return this.id;}
+    public void setComplete(int dist, double speed){
+        this.status = "complete";
+        this.isComplete=true;
+        this.completedMiles = dist;
+        this.completedSpeed = speed;
+    }
 
     @Override
     public int describeContents() {
@@ -75,16 +91,8 @@ public class Races implements Parcelable{
         dest.writeString(id);
         dest.writeString(competitorUsername);
         dest.writeInt(challengedMiles);
-        dest.writeInt(challengedTime);
+        dest.writeDouble(challengedSpeed);
         dest.writeInt(speedChallengeCompleted);
+        dest.writeInt(points);
     }
-//
-//        public void challengeCompleted(int completedMiles, int completedSpeed){
-//            this.status = "complete";
-//            if(completedMiles>=this.challengedMiles){
-//                this.isChallengeMet = true;
-//            }else{
-//                this.isChallengeMet = false;
-//            }
-//        }
 }

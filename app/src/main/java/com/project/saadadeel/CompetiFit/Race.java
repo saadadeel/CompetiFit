@@ -1,6 +1,7 @@
 package com.project.saadadeel.CompetiFit;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,8 +16,11 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.project.saadadeel.CompetiFit.connection.Races;
-import com.project.saadadeel.CompetiFit.connection.User;
+import com.project.saadadeel.CompetiFit.RunTracker.Pop;
+import com.project.saadadeel.CompetiFit.Models.Races;
+import com.project.saadadeel.CompetiFit.Models.User;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -33,20 +37,26 @@ public class Race extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             userRaces = bundle.getParcelableArrayList("userRaces");
+            this.u = bundle.getParcelable("User");
         }
-        populate(v, this.userRaces);
+
+        try {
+            populate(v, this.userRaces);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return v;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void populate(View v, ArrayList<Races> r) {
+    private void populate(View v, final ArrayList<Races> r) throws JSONException {
         TableLayout table = new TableLayout(getActivity());
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             this.u = bundle.getParcelable("User");
         }
 
-        for (Races race : r) {
+        for (final Races race : r) {
             TableRow tr = new TableRow(getActivity());
             TableRow tr1 = new TableRow(getActivity());
             TableRow tr2 = new TableRow(getActivity());
@@ -124,6 +134,28 @@ public class Race extends Fragment {
             if (race.getStatus().equals("recieved")) {
                 tr.addView(btn);
                 table = (TableLayout) v.findViewById(R.id.racesRecieved);
+                btn.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+//                        JSONObject custom = new JSONObject();
+//                        try {
+//                            custom.put("username", u.getUsername());
+//                            custom.put("compUsername", race.getCUsername());
+//                            custom.put("id", race.getId());
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        DBConnect db = new DBConnect(custom);
+//                        db.post("/activity/acceptRace");
+
+                        Intent intent;
+                        intent = new Intent(getActivity(), Pop.class);
+                        intent.putExtra("run", r);
+                        intent.putExtra("isRace",true);
+                        intent.putExtra("User",u);
+                        startActivity(intent);
+                    }
+                });
             }
             if(race.getStatus().equals("pending")){
                 btn.setText("Cancel");

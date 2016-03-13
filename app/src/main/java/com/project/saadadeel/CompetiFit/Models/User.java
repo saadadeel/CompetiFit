@@ -1,11 +1,8 @@
-package com.project.saadadeel.CompetiFit.connection;
+package com.project.saadadeel.CompetiFit.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.project.saadadeel.CompetiFit.Race;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -23,21 +20,26 @@ public class User implements Parcelable{
     private String userGender;
     private String userLocation;
 
-    private int userScore;
+    private int userScore = 0;
     private int userLevel;
+    public int averageDistance = 0;
+    public Double averageSpeed = 0.0;
+
 
     public ArrayList<Races> races = new ArrayList<Races>();
     public ArrayList<Runs> runs = new ArrayList<Runs>();
+    public ArrayList<minimalUser> league = new ArrayList<minimalUser>();
 
     public User (String uname, String fName, String lName, int age, String gender, String score){
 
     }
 
-    public User (String uname, String password, String fName, String lName){
+    public User (String uname, String password, String fName, String lName, int level){
         this.username = uname;
         this.firstName = fName;
         this.lastName = lName;
         this.password = password;
+        this.userLevel = level;
     }
 
     public User(){}
@@ -95,17 +97,14 @@ public class User implements Parcelable{
     public String getUserPassword(){
         return this.password;
     }
-
+    public ArrayList<minimalUser> getleague(){return this.league;}
     //Setters
-
     public void setUserScore(int addScore){
         this.userScore += addScore;
     }
-
     public void setUsername(String un){
         this.username = un;
     }
-
     public void setPassword(String pw){
         this.password = pw;
     }
@@ -113,18 +112,58 @@ public class User implements Parcelable{
     public ArrayList<Races> getRaces(){
         return this.races;
     }
-
     public Races getSingleRace(){
         ArrayList<Races> sample = this.getRaces();
         return sample.get(0);
     }
-
-    public void addRun(Runs run){
-        this.runs.add(0,run);
+    public void addRace(Races races){
+        this.races.add(0, races);
     }
 
+    public void addRun(Runs run){
+        this.runs.add(0, run);
+        run.setScore(this);
+        this.updateScore();
+        this.updateAverageDistandSpeed();
+    }
     public ArrayList<Runs> getRuns(){return this.runs;}
+    public void setRuns(ArrayList<Runs> r){this.runs=r;}
 
+    public void updateScore(){
+        int[] runScores;
+        int totalScore = 0;
+        if(this.getRuns()!=null){
+            runScores = new int[this.getRuns().size()];
+            for(int i = 0; i<this.getRuns().size(); i++){
+                totalScore += this.getRuns().get(i).getScore();
+            }
+        }
+        this.userScore = totalScore;
+    }
+    public void updateAverageDistandSpeed(){
+        int[] runDist;
+        int[] runTime;
+        Double totalDist = 0.0;
+        Double totalTime = 0.0;
+        if(this.getRuns()!=null){
+            runDist = new int[this.getRuns().size()];
+            runTime = new int[this.getRuns().size()];
+            for(int i = 0; i<this.getRuns().size(); i++){
+                totalDist += this.getRuns().get(i).getDistance();
+                totalTime += this.getRuns().get(i).getTime();
+            }
+        }
+        System.out.println(totalTime);
+        this.averageDistance = (int)(totalDist/this.getRuns().size());
+        this.averageSpeed = totalDist/totalTime;
+    }
+    public void updateRaces(Races race){
+        for (Races r : this.races) {
+            if (race.getId() == r.id) {
+                this.races.set(this.races.indexOf(r), race);
+            }
+        }
+    }
 
     @Override
     public int describeContents() {

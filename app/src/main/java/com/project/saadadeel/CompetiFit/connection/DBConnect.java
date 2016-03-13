@@ -3,14 +3,13 @@ package com.project.saadadeel.CompetiFit.connection;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
+import com.project.saadadeel.CompetiFit.Models.Races;
+import com.project.saadadeel.CompetiFit.Models.User;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -22,27 +21,36 @@ import java.util.logging.Logger;
 /**
  * Created by saadadeel on 01/02/2016.
  */
-public class DBConnect {
+public class DBConnect implements DBResponse{
     public User user;
+    boolean haveUser;
     String params;
-    boolean taskDone;
+    boolean taskDone = false;
+    JSONObject custom;
+    boolean haveObject = false;
+    Races race;
+    boolean haveRace = false;
 
     public DBConnect(){}
 
     public DBConnect(User u) {
         this.user = u;
+        this.haveUser = true;
+    }
+    public DBConnect(JSONObject o){
+        this.custom = o;
+        this.haveObject = true;
+    }
+    public DBConnect(Races race){
+        this.race = race;
+        this.haveRace = true;
     }
 
-    public User get(String params) {
+    public void get(String params) {
         this.setParams(params);
-        new getter().execute();
-            try {
-                Thread.sleep(2000);
-                return this.user;//1000 milliseconds is one second.
-            } catch(InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-        return null;
+        getter g = new getter();
+        g.delegate = this;
+        g.execute();
     }
 
     public User post(String params){
@@ -62,10 +70,7 @@ public class DBConnect {
     public User getUser(){
         return this.user;
     }
-
-    public void setUser(User user){
-        this.user = user;
-    }
+    public void setUser(User u){this.user = u;}
 
     public void setTaskDone(Boolean td){
         this.taskDone = td;
@@ -75,10 +80,19 @@ public class DBConnect {
        return this.taskDone;
     }
 
+    public User getResult(){
+        return this.user;
+    }
+
+    @Override
+    public void processFinish(User u) {
+        this.user = u;
+        setTaskDone(true);
+    }
+
     class getter extends AsyncTask<String, Void, String> {
-
         String data;
-
+        public DBResponse delegate = null;
         public getter() {
         }
 
@@ -90,7 +104,7 @@ public class DBConnect {
         protected String doInBackground(String... params) {
             System.out.println("//////////////////////////////////////");
             try {
-                data = getData("http://178.62.68.172:32816" + getParams(), 3000);
+                data = getData("http://178.62.68.172:32824" + getParams(), 3000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -99,12 +113,15 @@ public class DBConnect {
         }
 
         protected void onPostExecute(String test){
-            setUser(new Gson().fromJson(data, User.class));
+            User result = new Gson().fromJson(data, User.class);
+            setTaskDone(true);
+            setUser(result);
+            System.out.println(taskDone);
         }
 
         public String getData(String u, int timeout) throws IOException {
 
-            URL url = new URL("http://178.62.68.172:32817" + getParams());
+            URL url = new URL(u);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
             try {
@@ -165,7 +182,7 @@ public class DBConnect {
             System.out.println("//////////////////////////////////////");
             Boolean loggedIn = null;
             try {
-                loggedIn = postData("http://178.62.68.172:32821" + getParams(), 8000);
+                loggedIn = postData("http://178.62.68.172:32838" + getParams(), 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -194,11 +211,24 @@ public class DBConnect {
                 urlConnection.setConnectTimeout(timeout);
                 urlConnection.setReadTimeout(timeout);
 
-                Gson h = new Gson();
-
-                OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
-                wr.write(h.toJson(user));
-                wr.flush();
+                if(haveObject) {
+                    OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+                    wr.write(custom.toString());
+                    wr.flush();
+                }
+                if(haveUser){
+                    Gson h = new Gson();
+                    OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+                    wr.write(h.toJson(user));
+                    System.out.println("yooo");
+                    wr.flush();
+                }
+                if(haveRace){
+                    Gson h = new Gson();
+                    OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+                    wr.write(h.toJson(race));
+                    wr.flush();
+                }
 
                 int status = urlConnection.getResponseCode();
 

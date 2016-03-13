@@ -3,18 +3,22 @@ package com.project.saadadeel.CompetiFit;
         import android.annotation.TargetApi;
         import android.os.Build;
         import android.os.Bundle;
-        import android.os.Parcelable;
         import android.support.annotation.Nullable;
         import android.support.v4.app.Fragment;
         import android.view.Gravity;
         import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
+        import android.widget.LinearLayout;
         import android.widget.TableLayout;
         import android.widget.TableRow;
         import android.widget.TextView;
 
-        import com.project.saadadeel.CompetiFit.connection.User;
+        import com.project.saadadeel.CompetiFit.Models.Runs;
+        import com.project.saadadeel.CompetiFit.Models.User;
+        import com.project.saadadeel.CompetiFit.Models.minimalUser;
+
+        import java.util.ArrayList;
 
 public class LeagueTable extends Fragment {
 
@@ -22,7 +26,6 @@ public class LeagueTable extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.league_table, container, false);
         populate(v);
-        setTable(v);
         return v;
     }
 
@@ -32,55 +35,72 @@ public class LeagueTable extends Fragment {
             User u = bundle.getParcelable("User");
             TextView first = (TextView) v.findViewById(R.id.name1);
             first.setText(u.getUsername());
+
+            ArrayList<minimalUser> mU = bundle.getParcelableArrayList("userLeague");
+            setTable(v, mU);
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void setTable(View view) {
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void setTable(View view, ArrayList<minimalUser> r) {
         TableLayout table = (TableLayout) view.findViewById(R.id.tableLayout1);
+        int i =1;
 
-        for (int i = 0; i < 20; i++) {
-        /* Create a new row to be added. */
+        for (minimalUser leagueComp: r) {
             TableRow tr = new TableRow(getActivity());
-            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-        /* Position*/
-            TextView position = new TextView(getActivity());
-            position.setText("1.");
-            position.setId(200 + 28);
-            position.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
-            position.setTextSize(30);
-            position.setGravity(Gravity.TOP);
+            TableRow tr1 = new TableRow(getActivity());
 
-            position.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
-            tr.addView(position);
+            TextView competitor = new TextView(getActivity());
+            TextView secondText = new TextView(getActivity());
+            TextView thirdText = new TextView(getActivity());
+            TextView fourthText = new TextView(getActivity());
 
-        /* Name*/
-            TextView name = new TextView(getActivity());
-            name.setText("Saad Adeel");
-            name.setId(200 + 27);
-            name.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
-            name.setTextSize(30);
-            name.setGravity(Gravity.TOP);
+            competitor.setText(String.valueOf(i + "."));
+            competitor.setId(3 + 34);
+            competitor.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
+            competitor.setTextSize(20);
+            competitor.setBackgroundColor(getResources().getColor(R.color.colorForeground));
+            competitor.setGravity(Gravity.CENTER);
+            competitor.setPadding(4, 30, 4, 30);
 
-            name.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
-            tr.addView(name);
+            secondText.setText(String.valueOf(leagueComp.username));
+            secondText.setId(34 + 3);
+            secondText.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
+            secondText.setTextSize(20);
+            secondText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
+            secondText.setGravity(Gravity.CENTER);
+            secondText.setPadding(4, 30, 4, 30);
 
-        /* Points*/
-            TextView points = new TextView(getActivity());
-            points.setText("57 pts");
-            points.setId(200 + 26);
-            points.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
-            points.setTextSize(50);
-            points.setGravity(Gravity.RIGHT);
+            thirdText.setText(String.valueOf(leagueComp.userScore));
+            thirdText.setId(34 + 9);
+            thirdText.setTextColor(getResources().getColor(R.color.colorPrimary));
+            thirdText.setTextSize(20);
+            thirdText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
+            thirdText.setGravity(Gravity.CENTER);
+            thirdText.setPadding(4, 30, 4, 30);
 
-            points.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
-            tr.addView(points);
-            tr.setPadding(0, 40, 0, 40);
-            tr.setClickable(true);
-            tr.setBackgroundColor(getResources().getColor(R.color.colorForeground));
-            tr.setBottom(40);
-            //tr.setBackgroundResource(R.drawable.sf_gradient_03);
+            tr.addView(competitor);
+            tr.addView(secondText);
+            tr.addView(thirdText);
+
+//            fourthText.setText(String.valueOf(leagueComp.userScore));
+//            fourthText.setId(34 + 39);
+//            fourthText.setTextColor(getResources().getColor(R.color.colorPrimary));
+//            fourthText.setTextSize(20);
+//            fourthText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
+//            fourthText.setGravity(Gravity.CENTER);
+//            fourthText.setPadding(4, 30, 4, 30);
+
+            tr.setElevation(20);
+//            LinearLayout.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.FILL_PARENT);
+//            layoutParams.setMargins(60,60,60,60);
+//            tr1.setLayoutParams(layoutParams);
+//            tr1.addView(thirdText);
+//            tr1.addView(fourthText);
+
             table.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+//            table.addView(tr1, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+            i++;
         }
     }
 }

@@ -14,7 +14,7 @@ import android.view.View;
 import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.RunTracker.Pop;
 import com.project.saadadeel.CompetiFit.ScrollingPageAdapter.ViewPagerAdapter;
-import com.project.saadadeel.CompetiFit.connection.User;
+import com.project.saadadeel.CompetiFit.Models.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,23 +22,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class UserMain extends AppCompatActivity {
-
-    // Declaring Your View and Variables
-
     Toolbar toolbar;
     ViewPager pager;
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
     CharSequence Titles[]={"League","Activity","Races","Profile"};
     int Numboftabs =4;
+    Timer timer = new Timer();
 
     String username;
     User usr;
+    boolean isRefresher = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,22 @@ public class UserMain extends AppCompatActivity {
         String username = intent.getExtras().getString("username");
         setUsername(username);
 
-        new DBConnect().execute();
+        new DB().execute();
+        initiateRefresher();
+    }
+
+    public void initiateRefresher(){
+        TimerTask secondCounter = new TimerTask() {
+            @Override
+            public void run() {
+                isRefresher = true;
+                System.out.println("update /////////////////// yo");
+//                finish();
+//                startActivity(getIntent());
+                new DB().execute();
+            }
+        };
+        timer.scheduleAtFixedRate(secondCounter, 3*60*1000, 3*60*1000);
     }
 
 
@@ -83,11 +99,11 @@ public class UserMain extends AppCompatActivity {
 
     /////////////Database connector///////////
 
-    class DBConnect extends AsyncTask<String, Void, String> {
+    class DB extends AsyncTask<String, Void, String> {
 
         User usr;
 
-        public DBConnect(){
+        public DB(){
         }
 
         @Override
@@ -96,7 +112,7 @@ public class UserMain extends AppCompatActivity {
 
             String data = null;
             try {
-                data = getData("http://178.62.68.172:32821/user/details/"+ getUsername(), 3000);
+                data = getData("http://178.62.68.172:32838/user/details/"+ getUsername(), 3000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -109,37 +125,43 @@ public class UserMain extends AppCompatActivity {
         protected void onPostExecute(String test){
             setUser(usr);
 
-            // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-            adapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, Numboftabs, usr);
+            if(isRefresher){
+                adapter.setArgs(usr);
+            } else {
+                // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+                adapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, Numboftabs, usr);
 
-            // Assigning ViewPager View and setting the adapter
-            pager = (ViewPager) findViewById(R.id.pager);
-            pager.setAdapter(adapter);
+                // Assigning ViewPager View and setting the adapter
+                pager = (ViewPager) findViewById(R.id.pager);
+                pager.setAdapter(adapter);
 
-            // Assiging the Sliding Tab Layout View
-            tabs = (SlidingTabLayout) findViewById(R.id.tabs);
-            tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+                // Assiging the Sliding Tab Layout View
+                tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+                tabs.setDistributeEvenly(true);
 
-            // Setting Custom Color for the Scroll bar indicator of the Tab View
-            tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-                @Override
-                public int getIndicatorColor(int position) {
-                    return getResources().getColor(R.color.colorPrimary);
-                }
-            });
+                // Setting Custom Color for the Scroll bar indicator of the Tab View
+                tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+                    @Override
+                    public int getIndicatorColor(int position) {
+                        return getResources().getColor(R.color.colorPrimary);
+                    }
+                });
 
-            // Setting the ViewPager For the SlidingTabsLayout
-            tabs.setViewPager(pager);
+                // Setting the ViewPager For the SlidingTabsLayout
+                tabs.setViewPager(pager);
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(UserMain.this, Pop.class);
-                    intent.putExtra("user", usr);
-                    startActivity(intent);
-                }
-            });
+                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(UserMain.this, Pop.class);
+                        intent.putExtra("user", usr);
+                        intent.putExtra("runs", usr.getRuns());
+                        intent.putExtra("isRace", false);
+                        startActivity(intent);
+                    }
+                });
+            }
         }
 
         public String getData(String u, int timeout) throws IOException {

@@ -1,12 +1,10 @@
 package com.project.saadadeel.CompetiFit;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +14,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.project.saadadeel.CompetiFit.connection.Races;
-import com.project.saadadeel.CompetiFit.connection.Runs;
-import com.project.saadadeel.CompetiFit.connection.User;
+import com.project.saadadeel.CompetiFit.Models.Runs;
+import com.project.saadadeel.CompetiFit.Models.User;
 
 import java.util.ArrayList;
 
