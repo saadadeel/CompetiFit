@@ -1,10 +1,13 @@
 package com.project.saadadeel.CompetiFit.connection;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.Models.Races;
+import com.project.saadadeel.CompetiFit.Models.Runs;
 import com.project.saadadeel.CompetiFit.Models.User;
+import com.project.saadadeel.CompetiFit.UserMain;
 
 import org.json.JSONObject;
 
@@ -30,6 +33,8 @@ public class DBConnect implements DBResponse{
     boolean haveObject = false;
     Races race;
     boolean haveRace = false;
+    Runs run;
+    boolean haveRun = false;
 
     public DBConnect(){}
 
@@ -46,11 +51,9 @@ public class DBConnect implements DBResponse{
         this.haveRace = true;
     }
 
-    public void get(String params) {
-        this.setParams(params);
-        getter g = new getter();
-        g.delegate = this;
-        g.execute();
+    public DBConnect(Runs r){
+        this.run = r;
+        this.haveRun = true;
     }
 
     public User post(String params){
@@ -90,82 +93,6 @@ public class DBConnect implements DBResponse{
         setTaskDone(true);
     }
 
-    class getter extends AsyncTask<String, Void, String> {
-        String data;
-        public DBResponse delegate = null;
-        public getter() {
-        }
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            System.out.println("//////////////////////////////////////");
-            try {
-                data = getData("http://178.62.68.172:32824" + getParams(), 3000);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("CONNECTED");
-            return null;
-        }
-
-        protected void onPostExecute(String test){
-            User result = new Gson().fromJson(data, User.class);
-            setTaskDone(true);
-            setUser(result);
-            System.out.println(taskDone);
-        }
-
-        public String getData(String u, int timeout) throws IOException {
-
-            URL url = new URL(u);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-            try {
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setRequestProperty("Content-length", "0");
-                urlConnection.setUseCaches(false);
-                urlConnection.setAllowUserInteraction(false);
-                urlConnection.setConnectTimeout(timeout);
-                urlConnection.setReadTimeout(timeout);
-                urlConnection.connect();
-                int status = urlConnection.getResponseCode();
-
-                switch (status) {
-                    case 200:
-                        BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                        StringBuilder sb = new StringBuilder();
-                        String line;
-                        while ((line = br.readLine()) != null) {
-                            sb.append(line + "\n");
-                        }
-                        br.close();
-                        System.out.println("Inside data" + sb.toString());
-                        return sb.toString();
-                }
-
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                if (urlConnection != null) {
-                    try {
-                        urlConnection.disconnect();
-                    } catch (Exception ex) {
-                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-            return null;
-        }
-    }
-
-    ////////////////////////////////////////////////////
-
     class post extends AsyncTask<String, Void, String> {
 
         private Boolean taskComplete;
@@ -175,6 +102,7 @@ public class DBConnect implements DBResponse{
 
         @Override
         protected void onPreExecute() {
+            System.out.println("Task is in pre execute");
         }
 
         @Override
@@ -182,7 +110,7 @@ public class DBConnect implements DBResponse{
             System.out.println("//////////////////////////////////////");
             Boolean loggedIn = null;
             try {
-                loggedIn = postData("http://178.62.68.172:32838" + getParams(), 8000);
+                loggedIn = postData("http://178.62.68.172:32852" + getParams(), 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -194,6 +122,8 @@ public class DBConnect implements DBResponse{
         }
 
         protected void onPostExecute(String test){
+            System.out.println("Task is Done");
+
         }
 
         public Boolean postData(String u, int timeout) throws IOException {
@@ -220,7 +150,6 @@ public class DBConnect implements DBResponse{
                     Gson h = new Gson();
                     OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
                     wr.write(h.toJson(user));
-                    System.out.println("yooo");
                     wr.flush();
                 }
                 if(haveRace){
@@ -228,6 +157,13 @@ public class DBConnect implements DBResponse{
                     OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
                     wr.write(h.toJson(race));
                     wr.flush();
+                }
+                if(haveRun){
+                    Gson h = new Gson();
+                    OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+                    wr.write(h.toJson(run));
+                    wr.flush();
+                    System.out.println("This is a run model");
                 }
 
                 int status = urlConnection.getResponseCode();

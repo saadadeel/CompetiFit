@@ -1,6 +1,10 @@
 package com.project.saadadeel.CompetiFit;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.project.saadadeel.CompetiFit.Models.User;
 
@@ -32,13 +37,30 @@ public class MainActivity extends AppCompatActivity{
     public String password;
     public Boolean auth;
     public User user;
+    public SharedPreferences sharedPreferences;
+    public String myPref = "myPref";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        sharedPreferences = getSharedPreferences(myPref, Context.MODE_PRIVATE);
+
+        if(sharedPreferences.getString("USERNAME",null)==null&& sharedPreferences.getString("PASSWORD",null)==null){
+            setContentView(R.layout.activity_main);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        }
+        else{
+            this.auth = true;
+            if(isNetworkAvailable()) {
+                Intent intent = new Intent(this, UserMain.class);
+                intent.putExtra("username", this.username);
+                startActivity(intent);
+            }else{
+                Toast.makeText(this, "No Internet Connection Available",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
@@ -65,8 +87,13 @@ public class MainActivity extends AppCompatActivity{
 
     public void nextPage(View view) {
         // Handle event when Sign in Button is clicked
-        Intent intent = new Intent(this, SignUp.class);
-        startActivity(intent);
+        if(isNetworkAvailable()) {
+            Intent intent = new Intent(this, SignUp.class);
+            startActivity(intent);
+        }else{
+            Toast.makeText(this, "No Internet Connection Available",
+                    Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -80,10 +107,20 @@ public class MainActivity extends AppCompatActivity{
         EditText Pword = (EditText)findViewById(R.id.passwordInput);
         this.password = Pword.getText().toString();
 
-        new login().execute();
+        if(isNetworkAvailable()){
+            new login().execute();
+        }else{
+            Toast.makeText(this, "No Internet Connection Available",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     public void showMain(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("USERNAME", this.username);
+        editor.putString("PASSWORD", this.password);
+        editor.commit();
+
         Intent intent = new Intent(this, UserMain.class);
         intent.putExtra("username", this.username);
         startActivity(intent);
@@ -92,6 +129,13 @@ public class MainActivity extends AppCompatActivity{
     public void setAuthDenied(){
         TextView loginStatus = (TextView)findViewById(R.id.loginStatus);
         loginStatus.setText("Password incorrect");
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     public String getUsername(){return this.username;}
@@ -120,7 +164,7 @@ public class MainActivity extends AppCompatActivity{
             System.out.println("//////////////////////////////////////");
             Boolean loggedIn = null;
             try {
-                loggedIn = postData("http://178.62.68.172:32838/login/submit", 8000);
+                loggedIn = postData("http://178.62.68.172:32852/login/submit", 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }

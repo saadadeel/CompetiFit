@@ -41,11 +41,34 @@
             android:text="Races"
             android:textColor="@color/colorPrimary"
             android:layout_marginLeft="1dp"
-            android:gravity="center"></TextView>
+            android:gravity="center"/>
+
+        </TableRow>
+        <TableRow
+            android:id="@+id/message1"
+            android:layout_height="500dp"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:elevation="2dp"
+            android:background="@color/colorBackground">
+
+            <TextView
+                android:id="@+id/noRaces"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:textSize="10sp"
+                android:text="You currently have no Races due for completion"
+                android:textColor="@color/primary_text_material_dark"
+                android:layout_marginLeft="1dp"
+                android:gravity="center"/>
 
         </TableRow>
 
     </TableLayout>
+
 
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -75,11 +98,34 @@
             android:text="Recieved"
             android:textColor="@color/colorPrimary"
             android:layout_marginLeft="1dp"
-            android:gravity="center"></TextView>
+            android:gravity="center"/>
 
     </TableRow>
 
-</TableLayout>
+        <TableRow
+            android:id="@+id/message2"
+            android:layout_height="500dp"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:elevation="2dp"
+            android:background="@color/colorBackground">
+
+        <TextView
+            android:id="@+id/noChallenges"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textSize="10sp"
+            android:text="You currently have no challenges from other users"
+            android:textColor="@color/primary_text_material_dark"
+            android:layout_marginLeft="1dp"
+            android:gravity="center"/>
+
+        </TableRow>
+
+    </TableLayout>
 
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -109,12 +155,51 @@
                 android:text="Pending"
                 android:textColor="@color/colorPrimary"
                 android:layout_marginLeft="1dp"
-                android:gravity="center"></TextView>
+                android:gravity="center"/>
 
         </TableRow>
 
-    </TableLayout>
+        <TableRow
+            android:id="@+id/searchRow"
+            android:layout_height="500dp"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:elevation="2dp"
+            android:background="@color/colorForeground">
+                <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search for users to challenge"
+                android:id="@+id/searchButton"
+                    android:onClick="goToSearch"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/colorBackground"/>
+        </TableRow>
 
+
+        <TableRow
+            android:id="@+id/message3"
+            android:layout_height="500dp"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:elevation="2dp"
+            android:background="@color/colorBackground">
+
+            <TextView
+                android:id="@+id/noSentChallenges"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:textSize="10sp"
+                android:text="You have do not have any challenges sent to a user"
+                android:textColor="@color/primary_text_material_dark"
+                android:layout_marginLeft="1dp"
+                android:gravity="center"/>
+
+        </TableRow>
+    </TableLayout>
 
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -144,12 +229,31 @@
                 android:text="Completed"
                 android:textColor="@color/colorPrimary"
                 android:layout_marginLeft="1dp"
-                android:gravity="center"></TextView>
-
+                android:gravity="center"/>
         </TableRow>
 
+        <TableRow
+            android:id="@+id/message4"
+            android:layout_height="500dp"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:elevation="2dp"
+            android:background="@color/colorBackground">
+
+            <TextView
+                android:id="@+id/noCompletedChallenges"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:textSize="10sp"
+                android:text="You currently have no completed Races"
+                android:textColor="@color/primary_text_material_dark"
+                android:layout_marginLeft="1dp"
+                android:gravity="center"/>
+
+        </TableRow>
     </TableLayout>
-
 </RelativeLayout>
-
 </ScrollView>

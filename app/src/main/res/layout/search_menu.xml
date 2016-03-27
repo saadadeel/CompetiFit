@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/colorForeground"
+    android:id="@+id/search">
+
+        <TableRow
+            android:id="@+id/message3"
+            android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:elevation="2dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/colorForeground">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:inputType="textEmailAddress"
+                android:ems="10"
+                android:id="@+id/header"
+                android:autoText="false"
+                android:textSize="25sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:hint="enter username"
+                android:ellipsize="end"
+                android:textColorHint="@color/greyLight"
+                android:gravity="left"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Search"
+                android:id="@+id/loginButton"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@color/colorForeground"
+                android:layout_centerHorizontal="true"
+                android:elevation="3dp"/>
+
+        </TableRow>
+
+        <TextView
+            android:id="@+id/noCompletedChallenges"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textSize="10sp"
+            android:text="Search"
+            android:textColor="@color/primary_text_material_dark"
+            android:layout_marginLeft="1dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
+
+    </RelativeLayout>

@@ -20,40 +20,40 @@
         android:layout_height="match_parent"
         android:shrinkColumns="*"
         android:stretchColumns="*">
-    <TableRow
-        android:id="@+id/row1"
-        android:layout_height="500dp"
-        android:layout_width="match_parent"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:elevation="2dp"
-        android:background="@color/colorForeground">
-        <TextView
-            android:id="@+id/position1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="1."
-            android:textColor="@color/primary_text_material_dark"
-            android:layout_marginLeft="1dp"
-            android:gravity="top"></TextView>
-        <TextView
-            android:id="@+id/name1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="Saad Adeel"
-            android:gravity="top"
-            android:textColor="@color/primary_text_material_dark"></TextView>
-        <TextView
-            android:id="@+id/points"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="50sp"
-            android:text="24 pts"
-            android:gravity="right"
-            android:textColor="@color/primary_text_material_dark"></TextView>
-    </TableRow>
+    <!--<TableRow-->
+        <!--android:id="@+id/row1"-->
+        <!--android:layout_height="500dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:elevation="2dp"-->
+        <!--android:background="@color/colorForeground">-->
+        <!--<TextView-->
+            <!--android:id="@+id/position1"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="30sp"-->
+            <!--android:text="1."-->
+            <!--android:textColor="@color/primary_text_material_dark"-->
+            <!--android:layout_marginLeft="1dp"-->
+            <!--android:gravity="top"></TextView>-->
+        <!--<TextView-->
+            <!--android:id="@+id/name1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="30sp"-->
+            <!--android:text="Saad Adeel"-->
+            <!--android:gravity="top"-->
+            <!--android:textColor="@color/primary_text_material_dark"></TextView>-->
+        <!--<TextView-->
+            <!--android:id="@+id/points"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="50sp"-->
+            <!--android:text="24 pts"-->
+            <!--android:gravity="right"-->
+            <!--android:textColor="@color/primary_text_material_dark"></TextView>-->
+    <!--</TableRow>-->
 </TableLayout>
 </RelativeLayout>
     </ScrollView>

@@ -32,8 +32,6 @@ public class Running extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.content_running, container, false);
 
-//      textLong = (TextView) getWindow().findViewById(R.id.longitude);
-//        textLat = (TextView) v.findViewById(R.id.DistanceText);
         textDistance = (TextView) v.findViewById(R.id.dist);
         runTracker();
         return v;
@@ -62,10 +60,7 @@ public class Running extends Fragment {
                 double pLat = location.getLatitude();
 
                 textLat.setText(Double.toString(pLat));
-                // textLong.setText(Double.toString(pLong));
-
                 distanceTravelled+=newLocation.distanceTo(oldLocation);
-//                float distance = location.distanceTo(Ilford);
 
                 textDistance.setText(Double.toString(distanceTravelled));
                 oldLocation.set(newLocation);

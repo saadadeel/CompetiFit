@@ -1,4 +1,4 @@
-package com.project.saadadeel.CompetiFit.ScrollingPageAdapter;
+package com.project.saadadeel.CompetiFit.ViewGenerator;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,9 +34,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter{
     public void setArgs(User newU){
         this.user = newU;
         args.putParcelable("User", user);
-        args.putParcelableArrayList("userRaces", user.getRaces());
         args.putParcelableArrayList("userRuns", user.getRuns());
         args.putParcelableArrayList("userLeague", user.getleague());
+        args.putParcelableArrayList("userRaces", user.getRaces());
     }
 
     //This method return the fragment for the every position in the View Pager

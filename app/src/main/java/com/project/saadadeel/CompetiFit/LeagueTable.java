@@ -17,15 +17,21 @@ package com.project.saadadeel.CompetiFit;
         import com.project.saadadeel.CompetiFit.Models.Runs;
         import com.project.saadadeel.CompetiFit.Models.User;
         import com.project.saadadeel.CompetiFit.Models.minimalUser;
+        import com.project.saadadeel.CompetiFit.ViewGenerator.ViewGenerator;
 
         import java.util.ArrayList;
 
 public class LeagueTable extends Fragment {
 
+    ViewGenerator generator;
+    User u;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.league_table, container, false);
         populate(v);
+        Bundle bundle = this.getArguments();
+        this.u = bundle.getParcelable("User");
         return v;
     }
 
@@ -33,74 +39,15 @@ public class LeagueTable extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             User u = bundle.getParcelable("User");
-            TextView first = (TextView) v.findViewById(R.id.name1);
-            first.setText(u.getUsername());
+            this.generator = new ViewGenerator(v,getActivity(),u);
 
             ArrayList<minimalUser> mU = bundle.getParcelableArrayList("userLeague");
             setTable(v, mU);
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setTable(View view, ArrayList<minimalUser> r) {
         TableLayout table = (TableLayout) view.findViewById(R.id.tableLayout1);
-        int i =1;
-
-        for (minimalUser leagueComp: r) {
-            TableRow tr = new TableRow(getActivity());
-            TableRow tr1 = new TableRow(getActivity());
-
-            TextView competitor = new TextView(getActivity());
-            TextView secondText = new TextView(getActivity());
-            TextView thirdText = new TextView(getActivity());
-            TextView fourthText = new TextView(getActivity());
-
-            competitor.setText(String.valueOf(i + "."));
-            competitor.setId(3 + 34);
-            competitor.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
-            competitor.setTextSize(20);
-            competitor.setBackgroundColor(getResources().getColor(R.color.colorForeground));
-            competitor.setGravity(Gravity.CENTER);
-            competitor.setPadding(4, 30, 4, 30);
-
-            secondText.setText(String.valueOf(leagueComp.username));
-            secondText.setId(34 + 3);
-            secondText.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
-            secondText.setTextSize(20);
-            secondText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
-            secondText.setGravity(Gravity.CENTER);
-            secondText.setPadding(4, 30, 4, 30);
-
-            thirdText.setText(String.valueOf(leagueComp.userScore));
-            thirdText.setId(34 + 9);
-            thirdText.setTextColor(getResources().getColor(R.color.colorPrimary));
-            thirdText.setTextSize(20);
-            thirdText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
-            thirdText.setGravity(Gravity.CENTER);
-            thirdText.setPadding(4, 30, 4, 30);
-
-            tr.addView(competitor);
-            tr.addView(secondText);
-            tr.addView(thirdText);
-
-//            fourthText.setText(String.valueOf(leagueComp.userScore));
-//            fourthText.setId(34 + 39);
-//            fourthText.setTextColor(getResources().getColor(R.color.colorPrimary));
-//            fourthText.setTextSize(20);
-//            fourthText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
-//            fourthText.setGravity(Gravity.CENTER);
-//            fourthText.setPadding(4, 30, 4, 30);
-
-            tr.setElevation(20);
-//            LinearLayout.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.FILL_PARENT);
-//            layoutParams.setMargins(60,60,60,60);
-//            tr1.setLayoutParams(layoutParams);
-//            tr1.addView(thirdText);
-//            tr1.addView(fourthText);
-
-            table.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-//            table.addView(tr1, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-            i++;
-        }
+        generator.populateLeagueView(table, r);
     }
 }

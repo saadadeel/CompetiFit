@@ -15,10 +15,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:title="yooo"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleTextColor="@color/colorForeground"
+            app:title="CompetiFit">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Refresh"
+                android:id="@+id/refresh"
+                android:gravity="right"
+                android:onClick="refresh"/>
+
+        </android.support.v7.widget.Toolbar>
+
         <com.project.saadadeel.CompetiFit.SlidingTabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
             android:elevation="2dp"
             android:background="?attr/colorPrimary"/>
 

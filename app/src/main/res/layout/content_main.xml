@@ -19,7 +19,9 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/loginStatus"
+        android:layout_marginTop="20dp"
         android:layout_alignParentTop="true"
+        android:textColor="@color/colorPrimaryDark"
         android:layout_centerHorizontal="true" />
 
     <EditText

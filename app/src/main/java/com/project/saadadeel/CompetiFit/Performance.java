@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.project.saadadeel.CompetiFit.Models.Runs;
 import com.project.saadadeel.CompetiFit.Models.User;
+import com.project.saadadeel.CompetiFit.ViewGenerator.ViewGenerator;
 
 import java.util.ArrayList;
 
@@ -39,7 +40,11 @@ public class Performance extends Fragment {
 
     public void populate(View view){
         TextView score = (TextView) view.findViewById(R.id.score);
+        TextView level = (TextView) view.findViewById(R.id.level);
+        TextView average = (TextView) view.findViewById(R.id.KmAndSpeed);
         score.setText(String.valueOf(this.user.getUserScore()) + "pts");
+        level.setText("level " + this.user.getUserLevel());
+        average.setText(this.user.getAverageDist() + " km @ " + this.user.getAverageSpeed() + "km/hr");
 
         setRunTable(view, this.userRuns);
     }
@@ -49,58 +54,63 @@ public class Performance extends Fragment {
         TableLayout table = (TableLayout) v.findViewById(R.id.runs);
 
         for (Runs runs: r) {
-            TableRow tr = new TableRow(getActivity());
-            TableRow tr1 = new TableRow(getActivity());
+            ViewGenerator vg = new ViewGenerator(v,getActivity(),this.user);
 
-            TextView competitor = new TextView(getActivity());
-            TextView secondText = new TextView(getActivity());
-            TextView thirdText = new TextView(getActivity());
-            TextView fourthText = new TextView(getActivity());
+//            TableRow tr = new TableRow(getActivity());
+//            TableRow tr1 = new TableRow(getActivity());
+//
+//            TextView competitor = new TextView(getActivity());
+//            TextView secondText = new TextView(getActivity());
+//            TextView thirdText = new TextView(getActivity());
+//            TextView fourthText = new TextView(getActivity());
+//
+//            competitor.setText(String.valueOf(runs.getDistance()));
+//            competitor.setId(3 + 34);
+//            competitor.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
+//            competitor.setTextSize(15);
+//            competitor.setBackgroundColor(getResources().getColor(R.color.colorForeground));
+//            competitor.setGravity(Gravity.CENTER);
+//            competitor.setPadding(4, 30, 4, 30);
+//
+//            secondText.setText(String.valueOf(runs.getDate()));
+//            secondText.setId(34 + 3);
+//            secondText.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
+//            secondText.setTextSize(15);
+//            secondText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
+//            secondText.setGravity(Gravity.CENTER);
+//            secondText.setPadding(4, 30, 4, 30);
+//
+//            tr.addView(competitor);
+//            tr.addView(secondText);
+//
+//            thirdText.setText(String.valueOf(runs.getSpeed()));
+//            thirdText.setId(34 + 9);
+//            thirdText.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
+//            thirdText.setTextSize(20);
+//            thirdText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
+//            thirdText.setGravity(Gravity.CENTER);
+//            thirdText.setPadding(4, 30, 4, 30);
+//
+//            fourthText.setText(String.valueOf(runs.getScore()));
+//            fourthText.setId(34 + 39);
+//            fourthText.setTextColor(getResources().getColor(R.color.colorPrimary));
+//            fourthText.setTextSize(20);
+//            fourthText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
+//            fourthText.setGravity(Gravity.CENTER);
+//            fourthText.setPadding(4, 30, 4, 30);
+//
+//            tr1.setElevation(20);
+//            LinearLayout.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.FILL_PARENT);
+//            layoutParams.setMargins(60,60,60,60);
+//            tr1.setLayoutParams(layoutParams);
+//            tr1.addView(thirdText);
+//            tr1.addView(fourthText);
 
-            competitor.setText(String.valueOf(runs.getDistance()));
-            competitor.setId(3 + 34);
-            competitor.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
-            competitor.setTextSize(15);
-            competitor.setBackgroundColor(getResources().getColor(R.color.colorForeground));
-            competitor.setGravity(Gravity.CENTER);
-            competitor.setPadding(4, 30, 4, 30);
+            ArrayList<TableRow> rows = vg.populateRunView(runs);
 
-            secondText.setText(String.valueOf(runs.getDate()));
-            secondText.setId(34 + 3);
-            secondText.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
-            secondText.setTextSize(15);
-            secondText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
-            secondText.setGravity(Gravity.CENTER);
-            secondText.setPadding(4, 30, 4, 30);
-
-            tr.addView(competitor);
-            tr.addView(secondText);
-
-            thirdText.setText(String.valueOf(runs.getSpeed()));
-            thirdText.setId(34 + 9);
-            thirdText.setTextColor(getResources().getColor(R.color.primary_text_material_dark));
-            thirdText.setTextSize(20);
-            thirdText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
-            thirdText.setGravity(Gravity.CENTER);
-            thirdText.setPadding(4, 30, 4, 30);
-
-            fourthText.setText(String.valueOf(runs.getScore()));
-            fourthText.setId(34 + 39);
-            fourthText.setTextColor(getResources().getColor(R.color.colorPrimary));
-            fourthText.setTextSize(20);
-            fourthText.setBackgroundColor(getResources().getColor(R.color.colorForeground));
-            fourthText.setGravity(Gravity.CENTER);
-            fourthText.setPadding(4, 30, 4, 30);
-
-            tr1.setElevation(20);
-            LinearLayout.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.FILL_PARENT);
-            layoutParams.setMargins(60,60,60,60);
-            tr1.setLayoutParams(layoutParams);
-            tr1.addView(thirdText);
-            tr1.addView(fourthText);
-
-            table.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-            table.addView(tr1, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+            table.addView(rows.get(0));
+            table.addView(rows.get(1));
+            table.addView(rows.get(2));
         }
     }
 }

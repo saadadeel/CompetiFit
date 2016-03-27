@@ -14,12 +14,12 @@ public class Races implements Parcelable{
     public String id;
     public String competitorUsername;
 
-    public int challengedMiles;
-    public Double challengedSpeed;
+    public double challengedMiles;
+    public double challengedSpeed;
     public Boolean isComplete;
-    public int completedMiles;
-    public Double completedSpeed;
-    public int speedChallengeCompleted;
+    public double completedMiles;
+    public double completedSpeed;
+    public double speedChallengeCompleted;
 
     public int points;
 
@@ -72,6 +72,9 @@ public class Races implements Parcelable{
     }
     public String getStatus(){return this.status;}
     public String getId(){return this.id;}
+    public int getCompLevel(){
+        return 3;
+    }
     public void setComplete(int dist, double speed){
         this.status = "complete";
         this.isComplete=true;
@@ -90,9 +93,9 @@ public class Races implements Parcelable{
         dest.writeString(result);
         dest.writeString(id);
         dest.writeString(competitorUsername);
-        dest.writeInt(challengedMiles);
+        dest.writeDouble(challengedMiles);
         dest.writeDouble(challengedSpeed);
-        dest.writeInt(speedChallengeCompleted);
+        dest.writeDouble(speedChallengeCompleted);
         dest.writeInt(points);
     }
 }
