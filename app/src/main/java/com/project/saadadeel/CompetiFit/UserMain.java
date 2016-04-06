@@ -1,8 +1,12 @@
+
 package com.project.saadadeel.CompetiFit;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -51,6 +55,8 @@ public class UserMain extends AppCompatActivity implements DBResponse {
     CharSequence Titles[] = {"League", "Activity", "Races"};
     int Numboftabs = 3;
     Timer timer = new Timer();
+    public String myPref = "myPref";
+
 
     String username;
     User usr;
@@ -200,7 +206,6 @@ public class UserMain extends AppCompatActivity implements DBResponse {
     }
 
     public void setAdapter() {
-
         if (isRefresher) {
             adapter.setArgs(usr);
         } else {
@@ -232,10 +237,10 @@ public class UserMain extends AppCompatActivity implements DBResponse {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(UserMain.this, Pop.class);
-                    intent.putExtra("user", usr);
-                    intent.putExtra("runs", usr.getRuns());
-                    intent.putExtra("race", usr.getRaces());
-                    intent.putExtra("league", usr.getUserLeague());
+//                    intent.putExtra("user", usr);
+//                    intent.putExtra("runs", usr.getRuns());
+//                    intent.putExtra("race", usr.getRaces());
+//                    intent.putExtra("league", usr.getUserLeague());
                     intent.putExtra("isRace", false);
                     startActivity(intent);
                 }
@@ -254,5 +259,16 @@ public class UserMain extends AppCompatActivity implements DBResponse {
     public void processFinish(User u) {
         this.setUser(u);
         setAdapter();
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(u);
+        prefsEditor.putString("user", json);
+        prefsEditor.commit();
+    }
+
+    private Drawable resize(Drawable image) {
+        Bitmap b = ((BitmapDrawable)image).getBitmap();
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 50, 50, false);
+        return new BitmapDrawable(getResources(), bitmapResized);
     }
 }

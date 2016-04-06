@@ -11,6 +11,9 @@ import android.widget.Spinner;
 import com.project.saadadeel.CompetiFit.connection.DBConnect;
 import com.project.saadadeel.CompetiFit.Models.User;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class SignUp extends AppCompatActivity {
 
     private User user;
@@ -33,8 +36,14 @@ public class SignUp extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    public void nextPage(View view) {
+    public void nextPage(View view) throws JSONException {
         setUser();
+//        JSONObject u = new JSONObject();
+//        u.put("fname", this.user.getUserFirstName());
+//        u.put("lname", this.user.getUserLastName());
+//        u.put("username", this.user.getUsername());
+//        u.put("pword", this.user.getUserFirstName());
+
         DBConnect db = new DBConnect(this.user);
         this.user = db.post("/user/signIn");
         showNextPage();

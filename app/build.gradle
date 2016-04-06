@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.project.saadadeel.p1"
-        minSdkVersion 8
+        minSdkVersion 9
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -32,4 +32,5 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'com.google.android.gms:play-services:7.5.0'
 }

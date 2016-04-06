@@ -32,4 +32,9 @@
         android:orderInCategory="600"
         app:showAsAction="never"
         />
+    <item android:id="@+id/menu_item"
+        android:icon="@drawable/reload"
+        android:onClick="refresh"
+        android:title="refresh"
+        app:showAsAction="always"/>
 </menu>

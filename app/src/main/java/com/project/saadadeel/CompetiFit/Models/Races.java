@@ -3,6 +3,7 @@ package com.project.saadadeel.CompetiFit.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.DecimalFormat;
 import java.util.UUID;
 
 /**
@@ -20,7 +21,8 @@ public class Races implements Parcelable{
     public double completedMiles;
     public double completedSpeed;
     public double speedChallengeCompleted;
-
+    public int compUserLevel;
+    public boolean challengeComplete;
     public int points;
 
     public Races(){}
@@ -75,13 +77,34 @@ public class Races implements Parcelable{
     public int getCompLevel(){
         return 3;
     }
-    public void setComplete(int dist, double speed){
+    public void setComplete(double dist, double speed){
         this.status = "complete";
         this.isComplete=true;
         this.completedMiles = dist;
         this.completedSpeed = speed;
+        if(completedSpeed >= challengedSpeed && completedMiles >= challengedMiles){
+            this.challengeComplete = true;
+        }
+        else{
+            this.challengeComplete = false;
+        }
     }
+    public double getKMChallengedMiles(){
+        return RoundTo2Decimals(this.challengedMiles/1000);
+    }
+    public double getKMChallengedSpeed(){
+        return RoundTo2Decimals(this.challengedSpeed*3.6);
+    }
+    public double RoundTo2Decimals(double val) {
+        if (val < 1000) {
+            System.out.println(val);
+            DecimalFormat df2 = new DecimalFormat("#.00");
+            System.out.println("here is the new format" + df2.format(val));
 
+            return Double.valueOf(df2.format(val));
+        }
+        return 0.0;
+    }
     @Override
     public int describeContents() {
         return 0;

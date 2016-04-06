@@ -2,6 +2,7 @@ package com.project.saadadeel.CompetiFit.ViewGenerator;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.Models.Races;
 import com.project.saadadeel.CompetiFit.Models.Runs;
 import com.project.saadadeel.CompetiFit.Models.User;
@@ -38,12 +40,14 @@ public class ViewGenerator {
     TextView text;
     ArrayList<TableRow> rows = new ArrayList<TableRow>();
     User user;
+    public SharedPreferences sharedPreferences;
 
     public ViewGenerator(View v, Context c, User u){
         this.view = v;
         this.context = c;
         text = getSimpleTextView(1);
         this.user = u;
+        this.sharedPreferences = context.getSharedPreferences("myPref", Context.MODE_PRIVATE);
     }
 
     public ArrayList<TableRow> populateRunView(Runs run){
@@ -91,7 +95,7 @@ public class ViewGenerator {
         return this.rows;
     }
 
-    public ArrayList<TableRow> populateRaceView(final User u, final Races race){
+    public TableLayout populateRaceView(TableLayout table, final User u, final Races race){
         TextView text = getSimpleTextView(1);
         TextView text1 = getSimpleTextView(1);
         TextView text2 = getSimpleTextView(1);
@@ -106,7 +110,7 @@ public class ViewGenerator {
         text1.setText("lvl. " + race.getCompLevel());//+ race.getCompLevel());
         row1.addView(text1);
 
-        text2.setText(race.challengedMiles + "km @ " + race.challengedSpeed + "km/hr");
+        text2.setText(race.getKMChallengedMiles() + "km @ " + race.getKMChallengedSpeed() + "km/hr");
         text2.setTextSize(10);
         //race.challengedMiles + " @ " + race.challengedSpeed);
         row2.addView(text2);
@@ -114,26 +118,24 @@ public class ViewGenerator {
         row2.addView(text3);
 
         if(race.status.equals("pending")){
-            Button button1 = getCancelButton(u);
+            Button button1 = getCancelButton(u,2);
             row3.addView(button1);
             row3.setPadding(0,0,0,20);
         } else if (race.status.equals("recieved")){
-            Button button  = getRaceButton(u,1, race.competitorUsername);
-            Button button1 = getCancelButton(u);
+            Button button  = getRaceButton(u,1, race);
+            Button button1 = getCancelButton(u,1);
             row3.addView(button1);
             row3.addView(button);
             row3.setPadding(0,0,0,20);
         }else if (race.status.equals("active")){
-            Button button  = getRaceButton(u,2, race.competitorUsername);
+            Button button  = getRaceButton(u,2, race);
             row3.addView(button);
             row3.setPadding(0, 0, 0, 20);
         }
-
-        rows.add(row1);
-        rows.add(row2);
-        rows.add(row3);
-
-        return this.rows;
+        table.addView(row1, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+        table.addView(row2, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+        table.addView(row3, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+        return table;
     }
 
 
@@ -170,7 +172,9 @@ public class ViewGenerator {
                 text3.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
                 row2.addView(text3);
 
-                Button button = getRaceButton(new User(), 1, mUser.username);
+                Races r = new Races();
+
+                Button button = getRaceButton(new User(), 1, r);
                 button.setText("Race");
                 final String comp = mUser.username;
                 final String raceId = UUID.randomUUID().toString();
@@ -217,7 +221,7 @@ public class ViewGenerator {
         return text;
     }
 
-    public Button getRaceButton(final User u, int span, final String comp){
+    public Button getRaceButton(final User u, int span, final Races race){
         Button btn = new Button(context);
         btn.setText("Start");
         btn.setId(43 + 2);
@@ -228,16 +232,30 @@ public class ViewGenerator {
 //        layoutParams.span = span;
         layoutParams.span = span;
         btn.setLayoutParams(layoutParams);
+        btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(context, Pop.class);
+                intent.putExtra("isRace", true);
+                SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(race);
+                prefsEditor.putString("compRace", json);
+                prefsEditor.commit();
+                System.out.println("RACer name    " + race.getCUsername());
+                context.startActivity(intent);
+            }
+        });
         return btn;
     }
 
-    public Button getCancelButton(final User u){
+    public Button getCancelButton(final User u, int span){
         Button btn = new Button(context);
         btn.setText("Cancel");
         btn.setId(43 + 2);
         btn.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
         btn.setTextColor(context.getResources().getColor(R.color.colorForeground));
-        LinearLayout.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
+        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        layoutParams.span = span;
         btn.setLayoutParams(layoutParams);
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

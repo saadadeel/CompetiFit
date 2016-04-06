@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity{
             System.out.println("//////////////////////////////////////");
             Boolean loggedIn = null;
             try {
-                loggedIn = postData("http://178.62.68.172:32852/login/submit", 8000);
+                loggedIn = postData("http://178.62.68.172:32874/login/submit", 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }

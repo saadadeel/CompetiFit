@@ -121,6 +121,32 @@
             android:background="@color/colorPrimary"/>
 
     </TableRow>
+    <TableRow
+        android:id="@+id/compRow"
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:elevation="2dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="30dp"
+        android:background="@color/colorForeground"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Target: "
+            android:id="@+id/title"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_span="2"/>
+
+    </TableRow>
     </TableLayout>
 </RelativeLayout>
 

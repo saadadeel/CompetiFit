@@ -1,9 +1,14 @@
+
 package com.project.saadadeel.CompetiFit.RunTracker;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -18,8 +23,19 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityRecognitionResult;
+import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.Models.minimalUser;
 import com.project.saadadeel.CompetiFit.R;
@@ -30,6 +46,7 @@ import com.project.saadadeel.CompetiFit.Models.Races;
 import com.project.saadadeel.CompetiFit.Models.Runs;
 import com.project.saadadeel.CompetiFit.Models.User;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
@@ -45,7 +62,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by saadadeel on 21/01/2016.
  */
-public class Pop extends AppCompatActivity {
+public class Pop extends AppCompatActivity  implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     TextView textLong;
     TextView textLat;
@@ -74,11 +92,18 @@ public class Pop extends AppCompatActivity {
     Boolean isRace;
 
     Intent intent;
+    public SharedPreferences sharedPreferences;
+    public String myPref = "myPref";
+
+    Location mLastLocation;
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_running);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         textDistance = (TextView) findViewById(R.id.dist);
         timePassed = (TextView) findViewById(R.id.time);
@@ -86,42 +111,50 @@ public class Pop extends AppCompatActivity {
 
         Intent intent = getIntent();
         this.isRace = intent.getBooleanExtra("isRace", false);
-        this.usr = intent.getExtras().getParcelable("user");
+        sharedPreferences = getSharedPreferences(myPref, Context.MODE_PRIVATE);
+        this.sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+
+        Gson gson = new Gson();
+        String json = this.sharedPreferences.getString("user", "");
+        this.usr = gson.fromJson(json, User.class);
         this.username = this.usr.getUsername();
-        this.usr.setUserLeague(intent.getExtras().<minimalUser>getParcelableArrayList("league"));
-        this.usr.setRaces(intent.getExtras().<Races>getParcelableArrayList("race"));
-        this.usr.setRuns(intent.getExtras().<Runs>getParcelableArrayList("runs"));
         this.runs = this.usr.getRuns();
 
         if(this.isRace){
-            this.race = intent.getExtras().getParcelable("Race");
+            TableRow row = (TableRow)findViewById(R.id.compRow);
+            row.setVisibility(View.VISIBLE);
+            String race = this.sharedPreferences.getString("compRace", "");
+            this.race = gson.fromJson(race, Races.class);
+            System.out.println("YOOOOOOO this is a race    " + this.race.getCUsername());
+            TextView comp = (TextView)findViewById(R.id.title);
+            comp.setText("Target: \n" + this.race.getKMChallengedMiles() + " Km @ " + this.race.getKMChallengedSpeed() + " km/hr");
         }
-
         button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
                 if (isPlaying) {
                     isPlaying = false;
                     stopTracker();
                 } else {
                     isPlaying = true;
-                    runTracker();
+//                    runTracker();
+                    mGoogleApiClient.connect();
                 }
             }
         });
+        buildGoogleApiClient();
     }
 
-    public void runTracker() {
-        button.setText("Waiting for connection.....");
-        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        ll = new LocationListener();
-        try {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll);
-        } catch (SecurityException e) {
-            System.out.println("Get Permission Please");
-        }
-    }
+//    public void runTracker() {
+//        button.setText("Waiting for connection.....");
+//        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        ll = new LocationListener();
+//        try {
+//            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll);
+//        } catch (SecurityException e) {
+//            System.out.println("Get Permission Please");
+//        }
+//    }
 
     public Handler mHandler = new Handler() {
         @TargetApi(Build.VERSION_CODES.GINGERBREAD)
@@ -145,10 +178,11 @@ public class Pop extends AppCompatActivity {
         Date date = new Date();
         String date1 = dateFormat.format(date);
 
-        stopLocationListener();
+//        stopLocationListener();
+        stopLocationUpdates();
         this.usr.setRuns(this.runs);
 //        Runs run = new Runs(this.distanceTravelled, this.speedTravelling, this.username);
-        Runs run = new Runs(14000.00, 6.778, this.username);
+        Runs run = new Runs(10000.00, 3.778, this.username);
         run.setDate(date1);
 
         String text = run.getScore() + "pts.";
@@ -162,10 +196,19 @@ public class Pop extends AppCompatActivity {
         intent.putExtra("username", this.username);
 
         if(isNetworkAvailable()){
-            run.setIsSynced(0);
-            this.usr.addRun(run);
-            DBConnect db = new DBConnect(run);
-            db.post("/activity/Run");
+            if(this.isRace){
+//               this.race.setComplete(this.distanceTravelled, this.speedTravelling);
+               this.race.setComplete(6000.0, 4.0);
+                this.usr.updateRaces(this.race);
+                DBConnect db = new DBConnect(race);
+                db.post("/activity/completeRace");
+            }else{
+                run.setIsSynced(0);
+                this.usr.addRun(run);
+                DBConnect db = new DBConnect(run);
+                db.post("/activity/Run");
+            }
+
         }else{
             this.usr.setSynced(1);
             run.setIsSynced(1);
@@ -186,20 +229,20 @@ public class Pop extends AppCompatActivity {
         });
     }
 
-    private void stopLocationListener() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        lm.removeUpdates(ll);
-        return;
-    }
+//    private void stopLocationListener() {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        lm.removeUpdates(ll);
+//        return;
+//    }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -208,73 +251,225 @@ public class Pop extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    class LocationListener implements android.location.LocationListener {
-        @Override
-        public void onLocationChanged(Location location) {
-            if (location != null && turn) {
-                newLocation.set(location);
-                Double temp = Double.valueOf(newLocation.distanceTo(oldLocation));
+//    class LocationListener implements android.location.LocationListener {
+//        @Override
+//        public void onLocationChanged(Location location) {
+//            if (location != null && turn) {
+//                newLocation.set(location);
+//                Double temp = Double.valueOf(newLocation.distanceTo(oldLocation));
+//
+//                distanceTravelled+=temp;
+//                textDistance.setText(this.RoundTo2Decimals(distanceTravelled / 1000) + "km");
+//
+//                oldLocation.set(newLocation);
+//
+//                speedTravelling = (distanceTravelled/time)*3.6;
+//                speed.setText(this.RoundTo2Decimals(speedTravelling) + "km/hr");
+//            }
+//            else{
+//                if(isPlaying = true) {
+//                    button.setText("Stop");
+//                    newLocation.set(location);
+//                    oldLocation.set(newLocation);
+//
+//                    Double temp = Double.valueOf(newLocation.distanceTo(oldLocation));
+//                    distanceTravelled+=temp;
+//
+//                    textDistance.setText(this.RoundTo2Decimals(distanceTravelled) + "km");
+//                    speedTravelling = distanceTravelled/time;
+//
+//                    speed.setText((Double.toString(Math.round(speedTravelling)) + "km/hr"));
+//                    turn = true;
+//
+//                    TimerTask secondCounter = new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            time++;
+//                            mHandler.obtainMessage(1).sendToTarget();
+//                        }
+//                    };
+//                    timer.scheduleAtFixedRate(secondCounter, 1000, 1000);
+//                }
+//            }
+//        }
+//
+//        double RoundTo2Decimals(double val) {
+//            if(val<1000) {
+//                System.out.println(val);
+//                DecimalFormat df2 = new DecimalFormat("#.00");
+//                System.out.println("here is the new format" + df2.format(val));
+//
+//                return Double.valueOf(df2.format(val));
+//            }
+//            return 0.0;
+//        }
+//
+//        @Override
+//        public void onStatusChanged(String provider, int status, Bundle extras) {
+//
+//        }
+//
+//        @Override
+//        public void onProviderEnabled(String provider) {
+//
+//        }
+//
+//        @Override
+//        public void onProviderDisabled(String provider) {
+//
+//        }
+//    }
 
-                distanceTravelled+=temp;
-                textDistance.setText(this.RoundTo2Decimals(distanceTravelled / 1000) + "km");
-
-                oldLocation.set(newLocation);
-
-                speedTravelling = (distanceTravelled/time)*3.6;
-                speed.setText(this.RoundTo2Decimals(speedTravelling) + "km/hr");
-            }
-            else{
-                if(isPlaying = true) {
-                    button.setText("Stop");
-                    newLocation.set(location);
-                    oldLocation.set(newLocation);
-
-                    Double temp = Double.valueOf(newLocation.distanceTo(oldLocation));
-                    distanceTravelled+=temp;
-
-                    textDistance.setText(this.RoundTo2Decimals(distanceTravelled) + "km");
-                    speedTravelling = distanceTravelled/time;
-
-                    speed.setText((Double.toString(Math.round(speedTravelling)) + "km/hr"));
-                    turn = true;
-
-                    TimerTask secondCounter = new TimerTask() {
-                        @Override
-                        public void run() {
-                            time++;
-                            mHandler.obtainMessage(1).sendToTarget();
-                        }
-                    };
-                    timer.scheduleAtFixedRate(secondCounter, 1000, 1000);
-                }
-            }
+    @Override
+    public void onConnected(Bundle bundle) {
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(10000); // Update location every second
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            System.out.println("LOCATION: " + mLastLocation);
         }
-
-        double RoundTo2Decimals(double val) {
-            if(val<1000) {
-                System.out.println(val);
-                DecimalFormat df2 = new DecimalFormat("#.00");
-                System.out.println("here is the new format" + df2.format(val));
-
-                return Double.valueOf(df2.format(val));
-            }
-            return 0.0;
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
+        Intent i = new Intent(this, ActivityRecognitionIntentService.class);
+        final PendingIntent pendingIntent = PendingIntent.getService(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
+                mGoogleApiClient,
+                1000 /* detection interval */,
+                pendingIntent);
     }
 
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (location != null && turn) {
+            newLocation.set(location);
+            Double temp = Double.valueOf(newLocation.distanceTo(oldLocation));
+            if(temp>3){
+                distanceTravelled+=temp;
+            }
+            textDistance.setText(this.RoundTo2Decimals(distanceTravelled / 1000) + "km");
+            oldLocation.set(newLocation);
+            speedTravelling = (distanceTravelled/time)*3.6;
+            if(speedTravelling<0.5){
+                speed.setText("--");
+            }else{
+                speed.setText(this.RoundTo2Decimals(speedTravelling) + "km/hr");
+            }
+            System.out.println("HEEEELLLOOOO    "  + temp);
+        }
+        else{
+            if(isPlaying = true) {
+                button.setText("Stop");
+                newLocation.set(location);
+                oldLocation.set(newLocation);
+
+                Double temp = Double.valueOf(newLocation.distanceTo(oldLocation));
+                distanceTravelled+=temp;
+
+                textDistance.setText(this.RoundTo2Decimals(distanceTravelled) + "km");
+                speedTravelling = distanceTravelled/time;
+
+                speed.setText((Double.toString(Math.round(speedTravelling)) + "km/hr"));
+                turn = true;
+
+                TimerTask secondCounter = new TimerTask() {
+                    @Override
+                    public void run() {
+                        time++;
+                        mHandler.obtainMessage(1).sendToTarget();
+                    }
+                };
+                timer.scheduleAtFixedRate(secondCounter, 1000, 1000);
+            }
+        }
+
+    }
+
+    double RoundTo2Decimals(double val) {
+        if(val<1000) {
+            System.out.println(val);
+            DecimalFormat df2 = new DecimalFormat("#.00");
+            System.out.println("here is the new format" + df2.format(val));
+
+            return Double.valueOf(df2.format(val));
+        }
+        return 0.0;
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        System.out.println("The connection has failed");
+        buildGoogleApiClient();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mGoogleApiClient.disconnect();
+    }
+
+    synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .addApi(ActivityRecognition.API)
+                .build();
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+    }
+    class ActivityRecognitionIntentService extends IntentService {
+        /**
+         * Creates an IntentService.  Invoked by your subclass's constructor.
+         *
+         * @param name Used to name the worker thread, important only for debugging.
+         */
+        public ActivityRecognitionIntentService(String name) {
+            super(name);
+        }
+        //..
+        /**
+         * Called when a new activity detection update is available.
+         */
+        @Override
+        protected void onHandleIntent(Intent intent) {
+            //...
+            // If the intent contains an update
+            if (ActivityRecognitionResult.hasResult(intent)) {
+                // Get the update
+                ActivityRecognitionResult result =
+                        ActivityRecognitionResult.extractResult(intent);
+
+                DetectedActivity mostProbableActivity
+                        = result.getMostProbableActivity();
+
+                // Get the confidence % (probability)
+                int confidence = mostProbableActivity.getConfidence();
+
+                // Get the type
+                int activityType = mostProbableActivity.getType();
+           /* types:
+            * DetectedActivity.IN_VEHICLE
+            * DetectedActivity.ON_BICYCLE
+            * DetectedActivity.ON_FOOT
+            * DetectedActivity.STILL
+            * DetectedActivity.UNKNOWN
+            * DetectedActivity.TILTING
+            */
+                // process
+//                if(activityType == DetectedActivity.STILL ){
+//                   System.out.println("YOOOOOOO");
+//                }
+                System.out.println("YOOOOOOO     " + activityType);
+            }
+        }
+    }
 }
