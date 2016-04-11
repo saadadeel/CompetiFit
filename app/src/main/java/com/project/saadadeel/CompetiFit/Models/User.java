@@ -30,6 +30,8 @@ public class User implements Parcelable{
 
     public int offlineMode = 0;
     private int isSynced;
+    public int oldUserLevel;
+
 
     public ArrayList<Races> races = new ArrayList<Races>();
     public ArrayList<Runs> runs = new ArrayList<Runs>();
@@ -110,6 +112,7 @@ public class User implements Parcelable{
     public int getSynced(){return this.isSynced;}
     public int getIsOffline(){return this.offlineMode;}
     public int getUserLevel(){return this.userLevel;}
+
     public double getAverageDist(){
         Double aDist = this.averageDistance/1000;
         return RoundTo2Decimals(aDist);
@@ -120,10 +123,7 @@ public class User implements Parcelable{
     }
     public double RoundTo2Decimals(double val) {
         if (val < 1000) {
-            System.out.println(val);
             DecimalFormat df2 = new DecimalFormat("#.00");
-            System.out.println("here is the new format" + df2.format(val));
-
             return Double.valueOf(df2.format(val));
         }
         return 0.0;
@@ -158,9 +158,8 @@ public class User implements Parcelable{
         this.runs.add(0, run);
         run.setScore(this);
 
-        this.updateScore();
-        setLevel();
         this.updateAverageDistandSpeed();
+        this.updateScore();
     }
     public ArrayList<Runs> getRuns(){return this.runs;}
     public void setRuns(ArrayList<Runs> r){this.runs=r;}
@@ -174,7 +173,15 @@ public class User implements Parcelable{
                 totalScore += this.getRuns().get(i).getScore();
             }
         }
+        if(this.getRaces()!=null){
+            for(Races race : this.getRaces()){
+                if(race.result!=null && race.result.equals("winner")){
+                    totalScore += race.points;
+                }
+            }
+        }
         this.userScore = totalScore;
+        setLevel();
     }
     public void updateAverageDistandSpeed(){
         double totalDist = 0.0;
@@ -203,6 +210,15 @@ public class User implements Parcelable{
 
         if(this.runs.size()>=4) {
             this.userLevel = (int)((avgDist*avgSpeed)/10);
+        }
+
+        int level = (int)((avgDist*avgSpeed)/10);
+        if(level != this.userLevel){
+            this.oldUserLevel = this.userLevel;
+            this.userLevel = level;
+        }else{
+            this.userLevel = level;
+            this.userLevel = 0;
         }
     }
 

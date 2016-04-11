@@ -4,14 +4,8 @@
     tools:context="com.project.saadadeel.CompetiFit.MainActivity">
     <item
         android:id="@+id/action_profile"
-        android:title="profile"
+        android:title="Profile"
         android:orderInCategory="200"
-        app:showAsAction="never"
-        />
-    <item
-        android:id="@+id/action_changePassword"
-        android:title="Change Password"
-        android:orderInCategory="300"
         app:showAsAction="never"
         />
     <item
@@ -32,9 +26,10 @@
         android:orderInCategory="600"
         app:showAsAction="never"
         />
-    <item android:id="@+id/menu_item"
+
+    <item android:id="@+id/action_refresh"
         android:icon="@drawable/reload"
-        android:onClick="refresh"
         android:title="refresh"
         app:showAsAction="always"/>
+
 </menu>

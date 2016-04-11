@@ -1,6 +1,8 @@
 package com.project.saadadeel.CompetiFit.connection;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
@@ -20,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import android.util.Base64;
 
 /**
  * Created by saadadeel on 01/02/2016.
@@ -36,24 +39,34 @@ public class DBConnect implements DBResponse{
     Runs run;
     boolean haveRun = false;
 
+    String token = "";
+
     public DBConnect(){}
 
-    public DBConnect(User u) {
+    public DBConnect(User u, String token) {
         this.user = u;
         this.haveUser = true;
+
+        this.token = token;
     }
-    public DBConnect(JSONObject o){
+    public DBConnect(JSONObject o, String token){
         this.custom = o;
         this.haveObject = true;
+
+        this.token = token;
     }
-    public DBConnect(Races race){
+    public DBConnect(Races race, String token){
         this.race = race;
         this.haveRace = true;
+
+        this.token = token;
     }
 
-    public DBConnect(Runs r){
+    public DBConnect(Runs r, String token){
         this.run = r;
         this.haveRun = true;
+
+        this.token = token;
     }
 
     public User post(String params){
@@ -88,8 +101,8 @@ public class DBConnect implements DBResponse{
     }
 
     @Override
-    public void processFinish(User u) {
-        this.user = u;
+    public void processFinish(String data) {
+        this.user=new Gson().fromJson(data, User.class);
         setTaskDone(true);
     }
 
@@ -110,7 +123,7 @@ public class DBConnect implements DBResponse{
             System.out.println("//////////////////////////////////////");
             Boolean loggedIn = null;
             try {
-                loggedIn = postData("http://178.62.68.172:32874" + getParams(), 8000);
+                loggedIn = postData("http://178.62.68.172:32900" + getParams(), 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -130,10 +143,13 @@ public class DBConnect implements DBResponse{
 
             URL url = new URL(u);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//            String credentials = user.getUsername()+ ":" + user.getUserPassword();
+            String Auth ="Basic "+ token;
 
             try {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json");
+                urlConnection.setRequestProperty ("Authorization", Auth);
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
                 urlConnection.setUseCaches(false);

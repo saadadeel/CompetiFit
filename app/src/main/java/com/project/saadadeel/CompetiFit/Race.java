@@ -31,6 +31,10 @@ import java.util.ArrayList;
 public class Race extends Fragment {
     User u;
     ArrayList<Races> userRaces;
+    boolean isPending = false;
+    boolean isRecieved = false;
+    boolean isActive = false;
+    boolean isComplete = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,13 +63,34 @@ public class Race extends Fragment {
         for(final Races races : r){
             if(races.status.equals("pending")){
                 generator.populateRaceView((TableLayout) v.findViewById(R.id.racesSent),this.u, races);
+                this.isPending = true;
             } else if (races.status.equals("recieved")){
                 generator.populateRaceView((TableLayout) v.findViewById(R.id.racesRecieved),this.u, races);
+                this.isRecieved = true;
             }else if (races.status.equals("active")){
                 generator.populateRaceView((TableLayout) v.findViewById(R.id.racesDue),this.u, races);
+                this.isActive = true;
             }else if (races.status.equals("complete")){
                 generator.populateRaceView((TableLayout) v.findViewById(R.id.racesCompleted),this.u, races);
+                this.isComplete = true;
             }
+        }
+
+        if(isPending){
+            TextView text = (TextView) v.findViewById(R.id.noCompletedChallenges);
+            text.setVisibility(View.GONE);
+        }
+        if(isRecieved){
+            TextView text = (TextView) v.findViewById(R.id.noChallenges);
+            text.setVisibility(View.GONE);
+        }
+        if(isActive){
+            TextView text = (TextView) v.findViewById(R.id.noRaces);
+            text.setVisibility(View.GONE);
+        }
+        if(isComplete){
+            TextView text = (TextView) v.findViewById(R.id.noCompletedChallenges);
+            text.setVisibility(View.GONE);
         }
     }
     public void addRowsToTable(ArrayList<TableRow> rows, TableLayout table){

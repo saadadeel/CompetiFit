@@ -75,7 +75,7 @@ public class Races implements Parcelable{
     public String getStatus(){return this.status;}
     public String getId(){return this.id;}
     public int getCompLevel(){
-        return 3;
+        return compUserLevel;
     }
     public void setComplete(double dist, double speed){
         this.status = "complete";

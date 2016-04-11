@@ -5,39 +5,11 @@
     tools:context=".search"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action1"
-        android:title="profile"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        />
-    <item
-        android:id="@+id/action2"
-        android:title="Change Password"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        />
-    <item
-        android:id="@+id/action6"
-        android:title="About"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        /><item
-        android:id="@+id/action3"
-        android:title="Tutorial"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        />
-    <item
-        android:id="@+id/action4"
-        android:title="logout"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        />
+    <item android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="refresh"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
 </menu>

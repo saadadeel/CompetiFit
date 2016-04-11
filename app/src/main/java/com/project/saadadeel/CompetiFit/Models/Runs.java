@@ -85,8 +85,6 @@ public class Runs implements Parcelable{
 
     double RoundTo2Decimals(double val) {
         DecimalFormat df2 = new DecimalFormat("#.00");
-        System.out.println("here is the new format" + df2.format(val));
-
         return Double.valueOf(df2.format(val));
     }
 
@@ -110,7 +108,7 @@ public class Runs implements Parcelable{
     }
 
     private void setBasicPoints(User user){
-        if(user.getAverageDist()< this.getDistance() && user.getAverageSpeed()<this.getSpeed()){
+        if(user.getAverageDist()< this.getKMDist() && user.getAverageSpeed()<this.getKMperHrSpeed()){
             System.out.println("/////// here in basic");
             this.score += 3;
         }
@@ -126,7 +124,7 @@ public class Runs implements Parcelable{
         }
         if (userRuns != null && userRuns.size() > 2) {
             for (int i = 0; i < counter; i++) {
-                if (userRuns.get(i).getDistance() > userRuns.get(i + 1).getDistance() && userRuns.get(i).getSpeed() > userRuns.get(i + 1).getTime()) {
+                if (userRuns.get(i).getDistance() > userRuns.get(i + 1).getDistance() && userRuns.get(i).getSpeed() > userRuns.get(i + 1).getSpeed()) {
                     System.out.println("/////// here");
                     System.out.println(this.score);
                     this.score += 4;

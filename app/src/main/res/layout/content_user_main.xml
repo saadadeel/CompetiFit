@@ -25,21 +25,6 @@
             app:titleTextColor="@color/colorForeground"
             app:title="CompetiFit">
 
-            <!--<Button-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:background="@drawable/reload"-->
-                <!--android:id="@+id/refresh"-->
-                <!--android:gravity="end"-->
-                <!--android:width="6dp"-->
-                <!--android:height="8dp"-->
-                <!--android:backgroundTint="@color/colorForeground"-->
-                <!--android:onClick="refresh"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:adjustViewBounds="true"-->
-                <!--android:cropToPadding="false"-->
-                <!--android:scaleType="fitXY"/>-->
-
         </android.support.v7.widget.Toolbar>
 
         <com.project.saadadeel.CompetiFit.SlidingTabLayout

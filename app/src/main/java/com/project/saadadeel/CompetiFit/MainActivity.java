@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.Models.User;
 
 import org.json.JSONException;
@@ -45,21 +47,21 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         sharedPreferences = getSharedPreferences(myPref, Context.MODE_PRIVATE);
 
-        if(sharedPreferences.getString("USERNAME",null)==null&& sharedPreferences.getString("PASSWORD",null)==null){
+        if(sharedPreferences.getString("TOKEN",null)==null){
             setContentView(R.layout.activity_main);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
         }
         else{
             this.auth = true;
-            if(isNetworkAvailable()) {
+//            if(isNetworkAvailable()) {
                 Intent intent = new Intent(this, UserMain.class);
                 intent.putExtra("username", this.username);
                 startActivity(intent);
-            }else{
-                Toast.makeText(this, "No Internet Connection Available",
-                        Toast.LENGTH_LONG).show();
-            }
+//            }else{
+//                Toast.makeText(this, "No Internet Connection Available",
+//                        Toast.LENGTH_LONG).show();
+//            }
         }
     }
 
@@ -164,7 +166,7 @@ public class MainActivity extends AppCompatActivity{
             System.out.println("//////////////////////////////////////");
             Boolean loggedIn = null;
             try {
-                loggedIn = postData("http://178.62.68.172:32874/login/submit", 8000);
+                loggedIn = postData("http://178.62.68.172:32900/login/submit", 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -180,6 +182,11 @@ public class MainActivity extends AppCompatActivity{
 
         protected void onPostExecute(String test){
             if(auth) {
+                SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+                String credentials = this.usr.getUsername() + ":" + password;
+                String token = Base64.encodeToString(credentials.getBytes(), Base64.DEFAULT);
+                prefsEditor.putString("TOKEN", token);
+                prefsEditor.commit();
                 showMain();
             }else{
                 setAuthDenied();
@@ -223,6 +230,8 @@ public class MainActivity extends AppCompatActivity{
                         }
                         br.close();
                         System.out.print(sb.toString());
+                        User user = new Gson().fromJson(sb.toString(), User.class);
+                        this.usr = user;
                         return true;
 
                     case 400:

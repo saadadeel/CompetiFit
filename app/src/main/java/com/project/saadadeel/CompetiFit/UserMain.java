@@ -1,6 +1,7 @@
 
 package com.project.saadadeel.CompetiFit;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -56,6 +59,7 @@ public class UserMain extends AppCompatActivity implements DBResponse {
     int Numboftabs = 3;
     Timer timer = new Timer();
     public String myPref = "myPref";
+    Menu menu;
 
 
     String username;
@@ -63,36 +67,36 @@ public class UserMain extends AppCompatActivity implements DBResponse {
     boolean isRefresher = false;
     boolean isDataSynced = true;
 
+    Context context;
+
     public SharedPreferences sharedPreferences;
+    Gson gson = new Gson();
+    String token = " ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_user_main);
-
         Intent intent = getIntent();
-//        String username = intent.getExtras().getString("username");
-//        setUsername(username);
 
+        context = this;
         this.sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         String username = sharedPreferences.getString("USERNAME",null);
         setUsername(username);
+        String json = this.sharedPreferences.getString("user", "");
+        this.token= this.sharedPreferences.getString("TOKEN", "");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (intent.getExtras().containsKey("user")) {
-            System.out.println("int contains user");
-            this.usr = intent.getExtras().getParcelable("user");
-            this.usr.setUserLeague(intent.getExtras().<minimalUser>getParcelableArrayList("league"));
-            this.usr.setRaces(intent.getExtras().<Races>getParcelableArrayList("race"));
-            this.usr.setRuns(intent.getExtras().<Runs>getParcelableArrayList("runs"));
-            this.isDataSynced = false;
-            setAdapter();
-        } else {
-            DBGetter dbGetter = new DBGetter("/user/details/" + getUsername());
+        if(isNetworkAvailable()) {
+            DBGetter dbGetter = new DBGetter("/user/details/" + getUsername(), this.token);
             dbGetter.delegate = this;
             dbGetter.execute();
+        }else{
+            this.usr = gson.fromJson(json, User.class);
+            this.isDataSynced = false;
+            setAdapter();
         }
         initiateRefresher();
     }
@@ -104,8 +108,6 @@ public class UserMain extends AppCompatActivity implements DBResponse {
     }
 
     public void initiateRefresher() {
-        final DBGetter dbGetter = new DBGetter("/user/details/" + getUsername());
-        dbGetter.delegate = this;
         TimerTask secondCounter = new TimerTask() {
             @Override
             public void run() {
@@ -118,6 +120,8 @@ public class UserMain extends AppCompatActivity implements DBResponse {
                         isDataSynced = true;
                         usr.setSynced(0);
                     } else {
+                        DBGetter dbGetter = new DBGetter("/user/details/" + getUsername(), token);
+                        dbGetter.delegate = UserMain.this;
                         dbGetter.execute();
                     }
                 }
@@ -126,8 +130,8 @@ public class UserMain extends AppCompatActivity implements DBResponse {
         timer.scheduleAtFixedRate(secondCounter, 3 * 60 * 1000, 3 * 60 * 1000);
     }
 
-    public void refresh(View view) {
-        final DBGetter dbGetter = new DBGetter("/user/details/" + getUsername());
+    public void refresh() {
+        final DBGetter dbGetter = new DBGetter("/user/details/" + getUsername(),this.token);
         dbGetter.delegate = this;
         System.out.println("The user sync is : " + usr.getSynced());
 
@@ -145,6 +149,11 @@ public class UserMain extends AppCompatActivity implements DBResponse {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     public void syncRuns() {
         for (Runs run : this.usr.getRuns()) {
             System.out.println("Sync status for this run: " + run.getIsSynced());
@@ -152,12 +161,11 @@ public class UserMain extends AppCompatActivity implements DBResponse {
                 run.setIsSynced(0);
                 Runs r = new Runs(run.getDistance(), run.getSpeed(), usr.getUsername());
                 System.out.println("Run synced");
-                DBConnect db = new DBConnect(r);
+                DBConnect db = new DBConnect(r,token);
                 db.post("/activity/Run");
             }
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -171,9 +179,8 @@ public class UserMain extends AppCompatActivity implements DBResponse {
         switch (item.getItemId()) {
             case R.id.action_profile:
                 // About option clicked.
-                return true;
-            case R.id.action_changePassword:
-                // Exit option clicked.
+                Intent i = new Intent(this, profile.class);
+                startActivity(i);
                 return true;
             case R.id.action_about:
                 // Settings option clicked.
@@ -188,6 +195,12 @@ public class UserMain extends AppCompatActivity implements DBResponse {
                 System.out.println("logout");
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                return true;
+            case R.id.action_refresh:
+                this.refresh();
+                return true;
+            case R.id.action_search:
+                this.refresh();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -242,6 +255,7 @@ public class UserMain extends AppCompatActivity implements DBResponse {
 //                    intent.putExtra("race", usr.getRaces());
 //                    intent.putExtra("league", usr.getUserLeague());
                     intent.putExtra("isRace", false);
+                    UserMain.this.finish();
                     startActivity(intent);
                 }
             });
@@ -256,19 +270,14 @@ public class UserMain extends AppCompatActivity implements DBResponse {
     }
 
     @Override
-    public void processFinish(User u) {
+    public void processFinish(String data) {
+        User u = new Gson().fromJson(data, User.class);
         this.setUser(u);
         setAdapter();
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
-        Gson gson = new Gson();
+
         String json = gson.toJson(u);
         prefsEditor.putString("user", json);
         prefsEditor.commit();
-    }
-
-    private Drawable resize(Drawable image) {
-        Bitmap b = ((BitmapDrawable)image).getBitmap();
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 50, 50, false);
-        return new BitmapDrawable(getResources(), bitmapResized);
     }
 }

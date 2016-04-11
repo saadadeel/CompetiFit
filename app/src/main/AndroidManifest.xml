@@ -41,14 +41,26 @@
         <activity
             android:name=".search"
             android:label="@string/title_activity_user_main"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.project.saadadeel.CompetiFit.UserMain" />
         <activity
             android:name=".RunTracker.Pop"
-            android:theme="@style/AppTheme.custom" />
+            android:theme="@style/AppTheme.custom"
+            android:parentActivityName="com.project.saadadeel.CompetiFit.UserMain"
+            />
         <activity
             android:name=".RunTracker.Running"
             android:label="@string/title_activity_running"
             android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".profile"
+            android:label="@string/title_activity_running"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.project.saadadeel.CompetiFit.UserMain"
+            ></activity>
+
+        <service android:enabled="true" android:name="com.project.saadadeel.CompetiFit.RunTracker.ActivityRecognitionService" />
+
     </application>
 
 </manifest>

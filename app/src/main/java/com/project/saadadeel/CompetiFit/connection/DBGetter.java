@@ -1,6 +1,9 @@
 package com.project.saadadeel.CompetiFit.connection;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.util.Base64;
 
 import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.Models.User;
@@ -17,44 +20,51 @@ import java.util.logging.Logger;
 /**
  * Created by saadadeel on 22/03/2016.
  */
-public class DBGetter extends AsyncTask<String, Void, User> {
+public class DBGetter extends AsyncTask<String, Void, String> {
     String data;
     String params;
     public DBResponse delegate = null;
-    public DBGetter(String params) {
-        this.params = params;
-    }
     User usr;
+    String token = " ";
 
+    public DBGetter(String params, String token) {
+        this.params = params;
+        this.token = token;
+    }
     private String getParams(){
         return this.params;
     }
 
     @Override
-    protected User doInBackground(String... params) {
+    protected String doInBackground(String... params) {
         String data = null;
         try {
-            data = getData("http://178.62.68.172:32874" + getParams(), 3000);
+            data = getData("http://178.62.68.172:32900" + getParams(), 3000);
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("CONNECTED to DBGetter");
-        this.usr = new Gson().fromJson(data, User.class);
-        return this.usr;
+//        this.usr = new Gson().fromJson(data, User.class);
+        return data;
     }
 
-    protected void onPostExecute(User user){
-        delegate.processFinish(user);
+    protected void onPostExecute(String data){
+        delegate.processFinish(data);
     }
 
     public String getData(String u, int timeout) throws IOException {
+//
+//        String credentials = usr.getUsername()+ ":" + usr.getUserPassword();
 
+        String Auth ="Basic "+ token;
+        System.out.println(Auth);
         URL url = new URL(u);
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
         try {
             urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty("Content-length", "0");
+            urlConnection.setRequestProperty("Authorization", Auth);
             urlConnection.setUseCaches(false);
             urlConnection.setAllowUserInteraction(false);
             urlConnection.setConnectTimeout(timeout);
@@ -74,8 +84,15 @@ public class DBGetter extends AsyncTask<String, Void, User> {
                     System.out.println(sb);
                     return sb.toString();
 
-                case 0001:
-                    return "password incorrect";
+                case 400:
+                    BufferedReader br1 = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder sb1 = new StringBuilder();
+                    String line1;
+                    while ((line1 = br1.readLine()) != null) {
+                        sb1.append(line1+"\n");
+                    }
+                    br1.close();
+                    return sb1.toString();
             }
 
         } catch (MalformedURLException ex) {

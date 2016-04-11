@@ -1,21 +1,23 @@
-package com.project.saadadeel.CompetiFit.ViewGenerator;
+package com.project.saadadeel.CompetiFit.RunTracker;
 
+/**
+ * Created by saadadeel on 11/04/2016.
+ */
+
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.os.Bundle;
-import android.view.Menu;
 
 import com.project.saadadeel.CompetiFit.LeagueTable;
+import com.project.saadadeel.CompetiFit.Models.User;
 import com.project.saadadeel.CompetiFit.Performance;
 import com.project.saadadeel.CompetiFit.Race;
-import com.project.saadadeel.CompetiFit.Models.User;
-import com.project.saadadeel.CompetiFit.profile;
 
 /**
  * Created by hp1 on 21-01-2015.
  */
-public class ViewPagerAdapter extends FragmentStatePagerAdapter{
+public class runningVPA extends FragmentStatePagerAdapter {
 
     CharSequence Titles[];
     int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
@@ -24,7 +26,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter{
     Bundle args = new Bundle();
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapter(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb, User user) {
+    public runningVPA(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb, User user) {
         super(fm);
 
         this.Titles = mTitles;

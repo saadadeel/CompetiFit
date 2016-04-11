@@ -5,8 +5,10 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -19,8 +21,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NavUtils;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
@@ -40,7 +48,10 @@ import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.Models.minimalUser;
 import com.project.saadadeel.CompetiFit.R;
 //import com.project.saadadeel.CompetiFit.ScrollingPageAdapter.ViewPagerAdapter;
+import com.project.saadadeel.CompetiFit.SlidingTabLayout;
 import com.project.saadadeel.CompetiFit.UserMain;
+import com.project.saadadeel.CompetiFit.ViewGenerator.*;
+import com.project.saadadeel.CompetiFit.ViewGenerator.ViewPagerAdapter;
 import com.project.saadadeel.CompetiFit.connection.DBConnect;
 import com.project.saadadeel.CompetiFit.Models.Races;
 import com.project.saadadeel.CompetiFit.Models.Runs;
@@ -74,6 +85,11 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
     int time = 0;
     Double speedTravelling;
     boolean isPlaying = false;
+    ViewPager pager;
+    ViewPagerAdapter adapter;
+    SlidingTabLayout tabs;
+    CharSequence Titles[] = {"Run", "Map"};
+    int Numboftabs = 2;
 
     Location newLocation = new Location(LocationManager.GPS_PROVIDER);
     Location oldLocation = new Location(LocationManager.GPS_PROVIDER);
@@ -99,11 +115,18 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
+    public boolean isMoving = true;
+    Gson gson = new Gson();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_running);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         textDistance = (TextView) findViewById(R.id.dist);
         timePassed = (TextView) findViewById(R.id.time);
@@ -143,18 +166,9 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
             }
         });
         buildGoogleApiClient();
+        IntentFilter filter = new IntentFilter("action");
+        this.registerReceiver(new Receiver(), filter);
     }
-
-//    public void runTracker() {
-//        button.setText("Waiting for connection.....");
-//        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        ll = new LocationListener();
-//        try {
-//            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll);
-//        } catch (SecurityException e) {
-//            System.out.println("Get Permission Please");
-//        }
-//    }
 
     public Handler mHandler = new Handler() {
         @TargetApi(Build.VERSION_CODES.GINGERBREAD)
@@ -182,7 +196,7 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
         stopLocationUpdates();
         this.usr.setRuns(this.runs);
 //        Runs run = new Runs(this.distanceTravelled, this.speedTravelling, this.username);
-        Runs run = new Runs(10000.00, 3.778, this.username);
+        Runs run = new Runs(6000.00, 3.778, this.username);
         run.setDate(date1);
 
         String text = run.getScore() + "pts.";
@@ -194,18 +208,19 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
 
         this.intent = new Intent(this, UserMain.class);
         intent.putExtra("username", this.username);
+        String token= this.sharedPreferences.getString("TOKEN", "");
 
         if(isNetworkAvailable()){
             if(this.isRace){
 //               this.race.setComplete(this.distanceTravelled, this.speedTravelling);
-               this.race.setComplete(6000.0, 4.0);
+               this.race.setComplete(6000.0, 6.1);
                 this.usr.updateRaces(this.race);
-                DBConnect db = new DBConnect(race);
+                DBConnect db = new DBConnect(race, token);
                 db.post("/activity/completeRace");
             }else{
                 run.setIsSynced(0);
                 this.usr.addRun(run);
-                DBConnect db = new DBConnect(run);
+                DBConnect db = new DBConnect(run,token);
                 db.post("/activity/Run");
             }
 
@@ -215,10 +230,15 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
             this.usr.addRun(run);
             System.out.println(this.usr.getSynced());
 
-            intent.putExtra("user", this.usr);
-            intent.putExtra("race", this.usr.getRaces());
-            intent.putExtra("runs", this.usr.getRuns());
-            intent.putExtra("league", this.usr.getleague());
+//            intent.putExtra("user", this.usr);
+//            intent.putExtra("race", this.usr.getRaces());
+//            intent.putExtra("runs", this.usr.getRuns());
+//            intent.putExtra("league", this.usr.getleague());
+
+            SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+            String json = gson.toJson(this.usr);
+            prefsEditor.putString("user", json);
+            prefsEditor.commit();
             System.out.println("Offline mode");
         }
 
@@ -229,21 +249,6 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
         });
     }
 
-//    private void stopLocationListener() {
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        lm.removeUpdates(ll);
-//        return;
-//    }
-
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -251,74 +256,27 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-//    class LocationListener implements android.location.LocationListener {
-//        @Override
-//        public void onLocationChanged(Location location) {
-//            if (location != null && turn) {
-//                newLocation.set(location);
-//                Double temp = Double.valueOf(newLocation.distanceTo(oldLocation));
-//
-//                distanceTravelled+=temp;
-//                textDistance.setText(this.RoundTo2Decimals(distanceTravelled / 1000) + "km");
-//
-//                oldLocation.set(newLocation);
-//
-//                speedTravelling = (distanceTravelled/time)*3.6;
-//                speed.setText(this.RoundTo2Decimals(speedTravelling) + "km/hr");
-//            }
-//            else{
-//                if(isPlaying = true) {
-//                    button.setText("Stop");
-//                    newLocation.set(location);
-//                    oldLocation.set(newLocation);
-//
-//                    Double temp = Double.valueOf(newLocation.distanceTo(oldLocation));
-//                    distanceTravelled+=temp;
-//
-//                    textDistance.setText(this.RoundTo2Decimals(distanceTravelled) + "km");
-//                    speedTravelling = distanceTravelled/time;
-//
-//                    speed.setText((Double.toString(Math.round(speedTravelling)) + "km/hr"));
-//                    turn = true;
-//
-//                    TimerTask secondCounter = new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            time++;
-//                            mHandler.obtainMessage(1).sendToTarget();
-//                        }
-//                    };
-//                    timer.scheduleAtFixedRate(secondCounter, 1000, 1000);
-//                }
-//            }
-//        }
-//
-//        double RoundTo2Decimals(double val) {
-//            if(val<1000) {
-//                System.out.println(val);
-//                DecimalFormat df2 = new DecimalFormat("#.00");
-//                System.out.println("here is the new format" + df2.format(val));
-//
-//                return Double.valueOf(df2.format(val));
-//            }
-//            return 0.0;
-//        }
-//
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//        }
-//
-//        @Override
-//        public void onProviderEnabled(String provider) {
-//
-//        }
-//
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//
-//        }
-//    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+//                NavUtils.navigateUpFromSameTask(this);
+                Pop.this.finish();
+
+                Intent intent = new Intent(this, UserMain.class);
+                intent.putExtra("username", this.username);
+                startActivity(intent);
+
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+//        moveTaskToBack(true);
+        Pop.this.finish();
+    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -331,12 +289,9 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
         if (mLastLocation != null) {
             System.out.println("LOCATION: " + mLastLocation);
         }
-        Intent i = new Intent(this, ActivityRecognitionIntentService.class);
-        final PendingIntent pendingIntent = PendingIntent.getService(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-                mGoogleApiClient,
-                1000 /* detection interval */,
-                pendingIntent);
+        Intent intent = new Intent( this, ActivityRecognitionService.class );
+        PendingIntent pendingIntent = PendingIntent.getService( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates( mGoogleApiClient, 3000, pendingIntent );
     }
 
     @Override
@@ -349,7 +304,7 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
         if (location != null && turn) {
             newLocation.set(location);
             Double temp = Double.valueOf(newLocation.distanceTo(oldLocation));
-            if(temp>3){
+            if(isMoving){
                 distanceTravelled+=temp;
             }
             textDistance.setText(this.RoundTo2Decimals(distanceTravelled / 1000) + "km");
@@ -360,7 +315,7 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
             }else{
                 speed.setText(this.RoundTo2Decimals(speedTravelling) + "km/hr");
             }
-            System.out.println("HEEEELLLOOOO    "  + temp);
+            System.out.println("HEEEELLLOOOO    "  + isMoving + "     " + temp);
         }
         else{
             if(isPlaying = true) {
@@ -394,7 +349,6 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
         if(val<1000) {
             System.out.println(val);
             DecimalFormat df2 = new DecimalFormat("#.00");
-            System.out.println("here is the new format" + df2.format(val));
 
             return Double.valueOf(df2.format(val));
         }
@@ -426,50 +380,41 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }
-    class ActivityRecognitionIntentService extends IntentService {
-        /**
-         * Creates an IntentService.  Invoked by your subclass's constructor.
-         *
-         * @param name Used to name the worker thread, important only for debugging.
-         */
-        public ActivityRecognitionIntentService(String name) {
-            super(name);
-        }
-        //..
-        /**
-         * Called when a new activity detection update is available.
-         */
+    private class Receiver extends BroadcastReceiver {
         @Override
-        protected void onHandleIntent(Intent intent) {
-            //...
-            // If the intent contains an update
-            if (ActivityRecognitionResult.hasResult(intent)) {
-                // Get the update
-                ActivityRecognitionResult result =
-                        ActivityRecognitionResult.extractResult(intent);
-
-                DetectedActivity mostProbableActivity
-                        = result.getMostProbableActivity();
-
-                // Get the confidence % (probability)
-                int confidence = mostProbableActivity.getConfidence();
-
-                // Get the type
-                int activityType = mostProbableActivity.getType();
-           /* types:
-            * DetectedActivity.IN_VEHICLE
-            * DetectedActivity.ON_BICYCLE
-            * DetectedActivity.ON_FOOT
-            * DetectedActivity.STILL
-            * DetectedActivity.UNKNOWN
-            * DetectedActivity.TILTING
-            */
-                // process
-//                if(activityType == DetectedActivity.STILL ){
-//                   System.out.println("YOOOOOOO");
-//                }
-                System.out.println("YOOOOOOO     " + activityType);
+        public void onReceive(Context arg0, Intent arg1) {
+            String movement = arg1.getExtras().getString("motion");
+            System.out.println("RECIEVED   " + movement);
+            if(movement.equals("STILL")){
+                isMoving = false;
+            }else{
+                isMoving = true;
             }
         }
+    }
+
+    public void setAdapter() {
+            // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+            adapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, Numboftabs, usr);
+
+            // Assigning ViewPager View and setting the adapter
+            pager = (ViewPager) findViewById(R.id.pager1);
+            pager.setAdapter(adapter);
+
+            // Assiging the Sliding Tab Layout View
+            tabs = (SlidingTabLayout) findViewById(R.id.tabs1);
+            tabs.setDistributeEvenly(true);
+
+
+            // Setting Custom Color for the Scroll bar indicator of the Tab View
+            tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+                @Override
+                public int getIndicatorColor(int position) {
+                    return getResources().getColor(R.color.colorForeground);
+                }
+            });
+
+            // Setting the ViewPager For the SlidingTabsLayout
+            tabs.setViewPager(pager);
     }
 }

@@ -11,83 +11,16 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.project.saadadeel.CompetiFit.Performance">
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="57 pts"
-                android:id="@+id/score"
-                android:layout_alignParentTop="true"
-                android:textSize="60sp"
-                android:textAlignment="center"
-                android:textColor="@color/colorBackground"
-                android:background="@color/colorPrimary"
-                android:paddingTop="20dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="level 1"
-                android:id="@+id/level"
-                android:layout_below="@+id/score"
-                android:textSize="20sp"
-                android:textAlignment="center"
-                android:textColor="@color/colorBackground"
-                android:background="@color/colorPrimary"
-                android:paddingTop="20dp"
-                android:paddingBottom="10dp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="80Km @ 11Km/h"
-                android:id="@+id/KmAndSpeed"
-                android:layout_below="@+id/level"
-                android:textSize="20sp"
-                android:textAlignment="center"
-                android:textColor="@color/colorBackground"
-                android:background="@color/colorPrimary"
-                android:paddingTop="20dp"
-                android:paddingBottom="10dp"/>
-
-            <TableLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/runs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/KmAndSpeed"
-                android:shrinkColumns="*"
-                android:stretchColumns="*">
-
-            <TableRow
-                android:id="@+id/row1"
-                android:layout_height="500dp"
-                android:layout_width="match_parent"
-                android:gravity="center_horizontal"
-                android:elevation="2dp"
-                android:background="@color/colorForeground">
-
-                <TextView
-                    android:id="@+id/position1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="30sp"
-                    android:text="Runs"
-                    android:textColor="@color/colorPrimary"
-                    android:gravity="center"></TextView>
-
-            </TableRow>
-            </TableLayout>
-
+            <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            android:id="@+id/rvRun"
+            >
+        </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
-    </LinearLayout>
 </ScrollView>
 

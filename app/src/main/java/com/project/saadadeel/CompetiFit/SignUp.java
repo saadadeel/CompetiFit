@@ -27,7 +27,7 @@ public class SignUp extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -44,7 +44,7 @@ public class SignUp extends AppCompatActivity {
 //        u.put("username", this.user.getUsername());
 //        u.put("pword", this.user.getUserFirstName());
 
-        DBConnect db = new DBConnect(this.user);
+        DBConnect db = new DBConnect(this.user, " ");
         this.user = db.post("/user/signIn");
         showNextPage();
     }
