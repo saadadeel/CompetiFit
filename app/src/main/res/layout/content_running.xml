@@ -18,6 +18,12 @@
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="Running"
         android:layout_alignParentTop="true"/>
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/runningActivity"/>
 
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,11 +32,8 @@
     android:layout_height="wrap_content"
     android:shrinkColumns="*"
     android:stretchColumns="*"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
     android:layout_centerVertical="true"
-    android:layout_marginBottom="30dp"
-    android:layout_below="@+id/racesSent">
+    android:layout_alignParentBottom="true">
 
     <TableRow
         android:id="@+id/distRow"
@@ -38,10 +41,7 @@
         android:layout_width="match_parent"
         android:gravity="center_horizontal"
         android:elevation="2dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_centerVertical="true"
-        android:layout_marginBottom="30dp"
         android:layout_alignParentTop="true"
         android:background="@color/colorForeground">
 
@@ -65,10 +65,7 @@
         android:layout_width="match_parent"
         android:gravity="center_horizontal"
         android:elevation="2dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_centerVertical="true"
-        android:layout_marginBottom="30dp"
         android:layout_alignParentTop="true"
         android:background="@color/colorForeground">
         <TextView
@@ -101,36 +98,12 @@
     </TableRow>
 
     <TableRow
-        android:id="@+id/buttonRow"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:gravity="center_horizontal"
-        android:elevation="2dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="30dp"
-        android:background="@color/colorForeground">
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/button"
-            android:layout_span="2"
-            android:text="Start"
-            android:background="@color/colorPrimary"/>
-
-    </TableRow>
-    <TableRow
         android:id="@+id/compRow"
         android:layout_height="50dp"
         android:layout_width="match_parent"
         android:gravity="center_horizontal"
         android:elevation="2dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="30dp"
-        android:background="@color/colorForeground"
+        android:background="@color/colorBackground"
         android:visibility="gone">
 
         <TextView
@@ -145,6 +118,24 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:layout_span="2"/>
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/buttonRow"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:elevation="2dp"
+        android:background="@color/colorForeground">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            android:layout_span="2"
+            android:text="Start"
+            android:background="@color/colorPrimary"/>
 
     </TableRow>
     </TableLayout>

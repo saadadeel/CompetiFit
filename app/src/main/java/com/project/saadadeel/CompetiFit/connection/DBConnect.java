@@ -29,6 +29,8 @@ import android.util.Base64;
  */
 public class DBConnect implements DBResponse{
     public User user;
+    public DBResponse delegate = null;
+
     boolean haveUser;
     String params;
     boolean taskDone = false;
@@ -121,29 +123,28 @@ public class DBConnect implements DBResponse{
         @Override
         protected String doInBackground(String... params) {
             System.out.println("//////////////////////////////////////");
-            Boolean loggedIn = null;
+            String result= null;
             try {
-                loggedIn = postData("http://178.62.68.172:32900" + getParams(), 8000);
+               result = postData("http://178.62.68.172:32904" + getParams(), 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             System.out.println("CONNECTED to Sign Up");
             System.out.println("///////////////// ");
-            System.out.println(loggedIn);
+            System.out.println(result);
 
-            return null;
+            return result;
         }
 
-        protected void onPostExecute(String test){
+        protected void onPostExecute(String result){
             System.out.println("Task is Done");
-
+            delegate.processFinish(result);
         }
 
-        public Boolean postData(String u, int timeout) throws IOException {
+        public String postData(String u, int timeout) throws IOException {
 
             URL url = new URL(u);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//            String credentials = user.getUsername()+ ":" + user.getUserPassword();
             String Auth ="Basic "+ token;
 
             try {
@@ -195,10 +196,10 @@ public class DBConnect implements DBResponse{
                         }
                         br.close();
                         System.out.print(sb.toString());
-                        return true;
+                        return sb.toString();
 
                     case 400:
-                        return false;
+                        return " ";
                 }
 
             } catch (MalformedURLException ex) {

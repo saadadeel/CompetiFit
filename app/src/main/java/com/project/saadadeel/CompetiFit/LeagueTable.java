@@ -24,22 +24,28 @@ public class LeagueTable extends Fragment {
 
     ViewGenerator generator;
     User u;
+    String token;
     public SharedPreferences sharedPreferences;
     Gson gson = new Gson();
+    Context context;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.league_table, container, false);
+        this.sharedPreferences = getActivity().getSharedPreferences("myPref", Context.MODE_PRIVATE);
 //        populate(v);
         Bundle bundle = this.getArguments();
-//        this.u = bundle.getParcelable("User");
+        this.u = bundle.getParcelable("User");
         ArrayList<minimalUser> mU = bundle.getParcelableArrayList("userLeague");
+        this.token = this.sharedPreferences.getString("TOKEN", "");
+        this.context = getActivity();
+
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.rv);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 
-        leagueRVA adapter = new leagueRVA(mU);
+        leagueRVA adapter = new leagueRVA(mU, u, context, this.token);
         rv.setAdapter(adapter);
         return v;
     }
@@ -57,8 +63,8 @@ public class LeagueTable extends Fragment {
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             rv.setLayoutManager(llm);
 
-            leagueRVA adapter = new leagueRVA(mU);
-            rv.setAdapter(adapter);
+//            leagueRVA adapter = new leagueRVA(mU);
+//            rv.setAdapter(adapter);
 
             setTable(v, mU);
         }

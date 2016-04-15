@@ -7,14 +7,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.project.saadadeel.CompetiFit.connection.DBConnect;
 import com.project.saadadeel.CompetiFit.Models.User;
+import com.project.saadadeel.CompetiFit.connection.DBResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SignUp extends AppCompatActivity {
+public class SignUp extends AppCompatActivity implements DBResponse{
 
     private User user;
     String username;
@@ -45,8 +47,8 @@ public class SignUp extends AppCompatActivity {
 //        u.put("pword", this.user.getUserFirstName());
 
         DBConnect db = new DBConnect(this.user, " ");
+        db.delegate = this;
         this.user = db.post("/user/signIn");
-        showNextPage();
     }
 
     public void showNextPage() {
@@ -83,125 +85,15 @@ public class SignUp extends AppCompatActivity {
             this.level = 4;
         }
     }
+
+    @Override
+    public void processFinish(String data) {
+        String m = "user exists";
+        if(m.equals(data.trim())){
+            Toast.makeText(this, "This username already exists",
+                    Toast.LENGTH_LONG).show();
+        }else{
+            showNextPage();
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    class signUp extends AsyncTask<String, Void, String> {
-//
-//        User usr;
-//
-//        public signUp(){
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//        }
-//
-//        @Override
-//        protected String doInBackground(String... params) {
-//            System.out.println("//////////////////////////////////////");
-//            Boolean loggedIn = null;
-//            try {
-//                loggedIn = postData("http://178.62.68.172:32816/user/signIn", 8000);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            System.out.println("CONNECTED to Sign Up");
-//            System.out.println("///////////////// ");
-//            System.out.println(loggedIn);
-//
-//            return null;
-//        }
-//
-//        protected void onPostExecute(String test){
-//            showNextPage();
-//        }
-//
-//        public Boolean postData(String u, int timeout) throws IOException {
-//
-//            URL url = new URL(u);
-//            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//
-//            try {
-//                urlConnection.setRequestMethod("POST");
-//                urlConnection.setRequestProperty("Content-Type", "application/json");
-//                urlConnection.setDoOutput(true);
-//                urlConnection.setDoInput(true);
-//                urlConnection.setUseCaches(false);
-//                urlConnection.setAllowUserInteraction(false);
-//                urlConnection.setConnectTimeout(timeout);
-//                urlConnection.setReadTimeout(timeout);
-//
-//                JSONObject details   = new JSONObject();
-//
-//                details.put("username", user.getUsername());
-//                details.put("password", user.getUserPassword());
-//                details.put("firstName", user.getUserFirstName());
-//                details.put("lastName", user.getUserLastName());
-//
-//                OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
-//                wr.write(details.toString());
-//                wr.flush();
-//
-//                // urlConnection.connect();
-//                int status = urlConnection.getResponseCode();
-//
-//
-//                switch (status) {
-//                    case 200:
-//                        BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-//                        StringBuilder sb = new StringBuilder();
-//                        String line;
-//
-//                        while ((line = br.readLine()) != null) {
-//                            sb.append(line+"\n");
-//                        }
-//                        br.close();
-//                        System.out.print(sb.toString());
-//                        return true;
-//
-//                    case 400:
-////                        while ((line = br.readLine()) != null) {
-////                            sb.append(line+"\n");
-////                        }
-////                        br.close();
-////                        System.out.print(sb.toString());
-//                        return false;
-//                }
-//
-//            } catch (MalformedURLException ex) {
-//                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-//            } catch (IOException ex) {
-//                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            } finally {
-//                if (urlConnection != null) {
-//                    try {
-//                        urlConnection.disconnect();
-//                    } catch (Exception ex) {
-//                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//            }
-//            return null;
-//        }
-//    }
-//}

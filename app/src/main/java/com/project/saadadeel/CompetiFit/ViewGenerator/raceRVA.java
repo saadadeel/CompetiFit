@@ -18,40 +18,31 @@ import java.util.ArrayList;
 /**
  * Created by saadadeel on 11/04/2016.
  */
-public class runRVA extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class raceRVA extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     ArrayList<Runs> runs;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
-    boolean isHeaderSet = false;
     User header;
 
-    public runRVA(ArrayList<Runs> runs, User u){
+    public raceRVA(ArrayList<Runs> runs, User u){
         this.runs = runs;
         this.header = u;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(!isHeaderSet){
+        if(viewType == TYPE_HEADER)
+        {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.perf_header, parent, false);
-            this.isHeaderSet = true;
             return  new Header(v);
-        }else{
+        }
+        else if(viewType == TYPE_ITEM)
+        {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.run_card, parent, false);
             return new RunViewHolder(v);
         }
-//        if(viewType == TYPE_HEADER)
-//        {
-//            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.perf_header, parent, false);
-//            return  new Header(v);
-//        }
-//        else if(viewType == TYPE_ITEM)
-//        {
-//            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.run_card, parent, false);
-//            return new RunViewHolder(v);
-//        }
-//        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
+        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
     }
 
     @Override
@@ -65,17 +56,24 @@ public class runRVA extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         }
         else if(holder instanceof RunViewHolder)
         {
-           Runs runs = getItem(position-1);
+//           Runs runs = getItem(position-1);
             RunViewHolder rholder = (RunViewHolder) holder;
-          rholder.runDate.setText(runs.getDate() + " ");
-          rholder.runAvg.setText(runs.getKMDist() + "Km @ " + runs.getKMperHrSpeed() + "Km/Hr");
-          rholder.runPoints.setText(runs.getScore() + "pts.");
+            rholder.runDate.setText(runs.get(position).getDate() + " ");
+            rholder.runAvg.setText(runs.get(position).getKMDist() + "Km @ " + runs.get(position).getKMperHrSpeed() + "Km/Hr");
+            rholder.runPoints.setText(runs.get(position).getScore() + "pts.");
         }
     }
 
+//    @Override
+//    public void onBindViewHolder(RunViewHolder holder, int position) {
+//        holder.runDate.setText(runs.get(position).getDate() + " ");
+//        holder.runAvg.setText(runs.get(position).getKMDist() + "Km @ " + runs.get(position).getKMperHrSpeed() + "Km/Hr");
+//        holder.runPoints.setText(runs.get(position).getScore() + "pts.");
+//    }
+
     @Override
     public int getItemCount() {
-        return runs.size() + 1;
+        return runs.size();
     }
 
     public static class RunViewHolder extends RecyclerView.ViewHolder {

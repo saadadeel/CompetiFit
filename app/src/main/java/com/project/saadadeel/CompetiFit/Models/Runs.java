@@ -7,6 +7,7 @@ package com.project.saadadeel.CompetiFit.Models;
         import java.text.DecimalFormat;
         import java.text.SimpleDateFormat;
         import java.util.ArrayList;
+        import java.util.Calendar;
         import java.util.Date;
 
 /**
@@ -28,6 +29,10 @@ public class Runs implements Parcelable{
         this.speed = speed;
         this.time = (int)(d/speed);
         this.username = u;
+
+        DateFormat dateFormat = new SimpleDateFormat("E dd/MM/yyyy 'at' hh:mm");
+        Date date = new Date();
+        this.date = dateFormat.format(date);
     }
 
     protected Runs(Parcel in) {

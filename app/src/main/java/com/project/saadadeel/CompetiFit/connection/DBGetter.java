@@ -39,7 +39,7 @@ public class DBGetter extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         String data = null;
         try {
-            data = getData("http://178.62.68.172:32900" + getParams(), 3000);
+            data = getData("http://178.62.68.172:32904" + getParams(), 3000);
         } catch (IOException e) {
             e.printStackTrace();
         }

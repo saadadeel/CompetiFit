@@ -44,6 +44,11 @@ import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.Models.minimalUser;
 import com.project.saadadeel.CompetiFit.R;
@@ -56,6 +61,7 @@ import com.project.saadadeel.CompetiFit.connection.DBConnect;
 import com.project.saadadeel.CompetiFit.Models.Races;
 import com.project.saadadeel.CompetiFit.Models.Runs;
 import com.project.saadadeel.CompetiFit.Models.User;
+import android.support.v4.app.Fragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,6 +123,7 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
 
     public boolean isMoving = true;
     Gson gson = new Gson();
+    private GoogleMap googleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +138,31 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
         textDistance = (TextView) findViewById(R.id.dist);
         timePassed = (TextView) findViewById(R.id.time);
         speed = (TextView) findViewById(R.id.speed);
+
+        try {
+            if (googleMap == null) {
+                googleMap = ((MapFragment) getFragmentManager().
+                        findFragmentById(R.id.map)).getMap();
+            }
+            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            googleMap.setMyLocationEnabled(true);
+
+//            setToCurrent();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        googleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+                CameraUpdate zoom=CameraUpdateFactory.zoomTo(17);
+                googleMap.moveCamera(center);
+                googleMap.animateCamera(zoom);
+            }
+        });
+
 
         Intent intent = getIntent();
         this.isRace = intent.getBooleanExtra("isRace", false);
@@ -188,16 +220,13 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
     public void stopTracker() {
         timer.cancel();
         button.setText("Stop");
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        String date1 = dateFormat.format(date);
 
 //        stopLocationListener();
         stopLocationUpdates();
         this.usr.setRuns(this.runs);
 //        Runs run = new Runs(this.distanceTravelled, this.speedTravelling, this.username);
-        Runs run = new Runs(6000.00, 3.778, this.username);
-        run.setDate(date1);
+        Runs run = new Runs(7000.00, 4.778, this.username);
+//        run.setDate(date1);
 
         String text = run.getScore() + "pts.";
         textDistance.setText(text);
@@ -219,7 +248,7 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
                 db.post("/activity/completeRace");
             }else{
                 run.setIsSynced(0);
-                this.usr.addRun(run);
+//                this.usr.addRun(run);
                 DBConnect db = new DBConnect(run,token);
                 db.post("/activity/Run");
             }
@@ -276,6 +305,9 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
     public void onBackPressed() {
 //        moveTaskToBack(true);
         Pop.this.finish();
+        Intent intent = new Intent(this, UserMain.class);
+        intent.putExtra("username", this.username);
+        startActivity(intent);
     }
 
     @Override
@@ -417,4 +449,17 @@ public class Pop extends AppCompatActivity  implements GoogleApiClient.Connectio
             // Setting the ViewPager For the SlidingTabsLayout
             tabs.setViewPager(pager);
     }
+
+//    public void setToCurrent(){
+//        googleMap.setMyLocationEnabled(true);
+//
+//        Location location = googleMap.getMyLocation();
+//
+//        if (location != null) {
+//            Location myLocation = new LatLng(location.getLatitude(),
+//                    location.getLongitude());
+//        }
+//        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
+//                Constants.MAP_ZOOM));
+//    }
 }

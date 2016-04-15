@@ -14,8 +14,13 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:id="@+id/info">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -67,6 +72,20 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="30sp"
                 />
+
+        </RelativeLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/info"
+                android:text="Race"
+                android:id="@+id/lRaceButton"
+                android:background="@color/colorPrimary"
+                android:textAlignment="center"
+                android:textColorHint="@color/colorForeground"
+                android:padding="3sp"
+                android:textColor="@color/colorForeground"/>
 
         </RelativeLayout>
 

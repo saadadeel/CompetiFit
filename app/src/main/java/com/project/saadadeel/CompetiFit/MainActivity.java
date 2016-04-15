@@ -41,12 +41,13 @@ public class MainActivity extends AppCompatActivity{
     public User user;
     public SharedPreferences sharedPreferences;
     public String myPref = "myPref";
+    String errorMessage = "";
+    Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = getSharedPreferences(myPref, Context.MODE_PRIVATE);
-
         if(sharedPreferences.getString("TOKEN",null)==null){
             setContentView(R.layout.activity_main);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity{
 
     public void setAuthDenied(){
         TextView loginStatus = (TextView)findViewById(R.id.loginStatus);
-        loginStatus.setText("Password incorrect");
+        loginStatus.setText(errorMessage);
     }
 
     private boolean isNetworkAvailable() {
@@ -166,7 +167,7 @@ public class MainActivity extends AppCompatActivity{
             System.out.println("//////////////////////////////////////");
             Boolean loggedIn = null;
             try {
-                loggedIn = postData("http://178.62.68.172:32900/login/submit", 8000);
+                loggedIn = postData("http://178.62.68.172:32904/login/submit", 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -219,24 +220,28 @@ public class MainActivity extends AppCompatActivity{
 
                 int status = urlConnection.getResponseCode();
 
-                switch (status) {
-                    case 200:
-                        BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                        StringBuilder sb = new StringBuilder();
-                        String line;
+                if(status==200){
+                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
 
-                        while ((line = br.readLine()) != null) {
-                            sb.append(line+"\n");
-                        }
-                        br.close();
-                        System.out.print(sb.toString());
-                        User user = new Gson().fromJson(sb.toString(), User.class);
-                        this.usr = user;
-                        return true;
-
-                    case 400:
-                        return false;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line+"\n");
+                    }
+                    br.close();
+                    System.out.print(sb.toString());
+                    User user = new Gson().fromJson(sb.toString(), User.class);
+                    this.usr = user;
+                    return true;
+                }else if (status==400){
+                    errorMessage = "Password is incorrect";
+                    return false;
+                }else{
+                    errorMessage = "User not found";
+                    return false;
                 }
+
+
 
             } catch (MalformedURLException ex) {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
