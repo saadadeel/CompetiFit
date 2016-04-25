@@ -19,6 +19,7 @@ import com.project.saadadeel.CompetiFit.Models.minimalUser;
 import com.project.saadadeel.CompetiFit.R;
 import com.project.saadadeel.CompetiFit.UserMain;
 import com.project.saadadeel.CompetiFit.connection.DBConnect;
+import com.project.saadadeel.CompetiFit.connection.DBResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,12 +30,13 @@ import java.util.UUID;
 /**
  * Created by saadadeel on 11/04/2016.
  */
-public class leagueRVA extends RecyclerView.Adapter<leagueRVA.PersonViewHolder>{
+public class leagueRVA extends RecyclerView.Adapter<leagueRVA.LeagueViewHolder> implements DBResponse{
 
     ArrayList<minimalUser> league;
     User user;
     Context context;
     String token;
+    DBConnect db = new DBConnect();
 
     public leagueRVA(ArrayList<minimalUser> league, User user, Context context, String token){
         this.league = league;
@@ -44,28 +46,31 @@ public class leagueRVA extends RecyclerView.Adapter<leagueRVA.PersonViewHolder>{
     }
 
     @Override
-    public PersonViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LeagueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.league_card, parent, false);
-        PersonViewHolder pvh = new PersonViewHolder(v);
-        return pvh;
+        LeagueViewHolder lvh = new LeagueViewHolder(v);
+        return lvh;
     }
 
     @Override
-    public void onBindViewHolder(PersonViewHolder holder, int position) {
-        holder.personName.setText(league.get(position).username);
-        holder.personAge.setText("lvl. " + league.get(position).userLevel);
-        holder.personPhoto.setText(position + 1 + ".");
+    public void onBindViewHolder(LeagueViewHolder holder, int position) {
+        holder.leagueName.setText(league.get(position).username);
+        holder.leagueLevel.setText("lvl. " + league.get(position).userLevel);
+        holder.leaguePosition.setText(position + 1 + ".");
         holder.points.setText(league.get(position).userScore + "pts");
         holder.avg.setText(league.get(position).getAverageDist() + "Km @ " + league.get(position).getAverageSpeed() + "KM/hr");
 
         if (league.get(position).username.equals(user.getUsername()) && league.get(position).userLevel == user.getUserLevel()) {
-            System.out.println("USERNAME LEAGUE   " + user.getUsername());
                 holder.btn.setVisibility(View.GONE);
         }else {
             holder.btn.setVisibility(View.VISIBLE);
             final String comp = league.get(position).username;
             final String raceId = UUID.randomUUID().toString();
             final String username= user.getUsername();
+
+            db = new DBConnect(token);
+            db.delegate = this;
+
             holder.btn.setOnClickListener(new View.OnClickListener() {
                 boolean raceSent = false;
                 public void onClick(View v) {
@@ -78,7 +83,7 @@ public class leagueRVA extends RecyclerView.Adapter<leagueRVA.PersonViewHolder>{
                         e.printStackTrace();
                     }
 
-                    if(isNetworkAvailable()){
+                    if(isInternetAvailable()){
                         for (Races races : user.getRaces()) {
                             if (races.getCUsername().equals(comp) && !races.isComplete) {
                                 raceSent = true;
@@ -88,12 +93,9 @@ public class leagueRVA extends RecyclerView.Adapter<leagueRVA.PersonViewHolder>{
                             Toast.makeText(context, "Race already set with " + comp,
                                     Toast.LENGTH_LONG).show();
                         } else {
-                            DBConnect db = new DBConnect(object, token);
-                            db.post("/activity/acceptRace");
+                            db.post("/user/" + username + "/acceptRace", object);
                             Toast.makeText(context, "Race request sent to " + comp,
                                     Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(context, UserMain.class);
-                            context.startActivity(intent);
                         }
                     }else{
                         Toast.makeText(context, "No internet connection available",
@@ -109,21 +111,28 @@ public class leagueRVA extends RecyclerView.Adapter<leagueRVA.PersonViewHolder>{
         return league.size();
     }
 
-    public static class PersonViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void processFinish(String data) {
+        System.out.println("done");
+        Intent intent = new Intent(context, UserMain.class);
+        context.startActivity(intent);
+    }
+
+    public static class LeagueViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
-        TextView personName;
-        TextView personAge;
-        TextView personPhoto;
+        TextView leagueName;
+        TextView leagueLevel;
+        TextView leaguePosition;
         TextView points;
         TextView avg;
         Button btn;
 
-        PersonViewHolder(View itemView) {
+        LeagueViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
-            personName = (TextView)itemView.findViewById(R.id.person_name);
-            personAge = (TextView)itemView.findViewById(R.id.person_age);
-            personPhoto = (TextView)itemView.findViewById(R.id.person_photo);
+            leagueName = (TextView)itemView.findViewById(R.id.league_name);
+            leagueLevel = (TextView)itemView.findViewById(R.id.league_level);
+            leaguePosition = (TextView)itemView.findViewById(R.id.league_position);
             points = (TextView)itemView.findViewById(R.id.league_points);
             avg = (TextView)itemView.findViewById(R.id.avg);
             btn = (Button)itemView.findViewById(R.id.lRaceButton);
@@ -135,11 +144,15 @@ public class leagueRVA extends RecyclerView.Adapter<leagueRVA.PersonViewHolder>{
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    private boolean isInternetAvailable() {
+        ConnectivityManager conManager =
+                (ConnectivityManager)
+                        context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()){
+            return true;
+        }
+        return false;
     }
 
 }

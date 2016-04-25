@@ -3,11 +3,14 @@ package com.project.saadadeel.CompetiFit;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -95,9 +98,14 @@ public class search extends AppCompatActivity implements DBResponse{
     }
 
     public void getUsers(String query){
-        DBGetter dbGetter = new DBGetter("/user/minimal/" + query, token);
-        dbGetter.delegate = this;
-        dbGetter.execute();
+        if(isInternetAvailable()) {
+            DBGetter dbGetter = new DBGetter("/minimalUser/" + query, token);
+            dbGetter.delegate = this;
+            dbGetter.execute();
+        }else{
+            Toast.makeText(context, "No internet connection available",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -115,69 +123,73 @@ public class search extends AppCompatActivity implements DBResponse{
         search.this.finish();
     }
 
-    @Override
-    public void processFinish(String data) {
-        final minimalUser user = new Gson().fromJson(data, minimalUser.class);
-        if (user != null) {
-            Races race = new Races();
-            TableLayout table = (TableLayout) findViewById(R.id.userFound);
-            table.setVisibility(View.VISIBLE);
+        @Override
+        public void processFinish(String data) {
+            System.out.println("YOOOOO INSIDE SEARCH PROCESS FINISH" + data);
+            TextView t1 = (TextView) findViewById(R.id.search_name);
+            TextView t2 = (TextView) findViewById(R.id.search_level);
+            TextView t3 = (TextView) findViewById(R.id.search_average);
+            TextView t4 = (TextView) findViewById(R.id.search_points);
+            Button btn = (Button) findViewById(R.id.search_raceButton);
+            CardView foundUser = (CardView) findViewById(R.id.foundUser);
 
-            TextView t1 = (TextView) findViewById(R.id.name);
-            t1.setText(user.username + " ");
+            if(!data.trim().equals("error")){
+                final minimalUser user = new Gson().fromJson(data, minimalUser.class);
+                Races race = new Races();
+                foundUser.setVisibility(View.VISIBLE);
 
-            TextView t2 = (TextView) findViewById(R.id.level);
-            t2.setText(user.userLevel + " ");
+                t1.setText(user.username + " ");
+                t2.setText(user.userLevel + " ");
+                t3.setText(user.getAverageDist() + "Km@" + user.getAverageSpeed() + "Km/hr");
+                t4.setText(user.userScore + "pts.");
+                btn.setText("Race");
+                final String raceId = UUID.randomUUID().toString();
 
-            TextView t3 = (TextView) findViewById(R.id.average);
-            t2.setText("13KM/hr ");
-
-            Button btn = new Button(this);
-            btn.setText("Race");
-            btn.setId(43 + 2);
-            btn.setBackgroundColor(this.getResources().getColor(R.color.colorPrimary));
-            btn.setTextColor(this.getResources().getColor(R.color.colorForeground));
-            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            layoutParams.span = 1;
-            btn.setLayoutParams(layoutParams);
-            final String raceId = UUID.randomUUID().toString();
-
-            TableRow tableRow = (TableRow) findViewById(R.id.row3);
-            tableRow.addView(btn);
-
-            btn.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    JSONObject object = new JSONObject();
-                    boolean raceSent = false;
-                    try {
-                        object.put("compUsername", user.username);
-                        object.put("username", u.getUsername());
-                        object.put("id", raceId);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    for(Races races : u.getRaces()){
-                        if(races.getCUsername().equals(user.username) && !races.isComplete){
-                            raceSent = true;
+                btn.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        JSONObject object = new JSONObject();
+                        boolean raceSent = false;
+                        try {
+                            object.put("compUsername", user.username);
+                            object.put("username", u.getUsername());
+                            object.put("id", raceId);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        for(Races races : u.getRaces()){
+                            if(races.getCUsername().equals(user.username) && !races.isComplete){
+                                raceSent = true;
+                            }
+                        }
+                        if(raceSent){
+                            Toast.makeText(context, "Race already set with " + user.username,
+                                    Toast.LENGTH_LONG).show();
+                        }else{
+                            DBConnect db = new DBConnect(token);
+                            db.post("/user/"+u.getUsername()+"/acceptRace",object);
+                            Toast.makeText(context, "Race request sent to " + user.username,
+                                    Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(context,UserMain.class);
+                            startActivity(intent);
                         }
                     }
-                    if(raceSent){
-                        Toast.makeText(context, "Race already set with " + user.username,
-                                Toast.LENGTH_LONG).show();
-                    }else{
-                        DBConnect db = new DBConnect(object, token);
-                        db.post("/activity/acceptRace");
-                        Toast.makeText(context, "Race request sent to " + user.username,
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }else{
-            TableLayout table = (TableLayout) findViewById(R.id.userFound);
-            table.setVisibility(View.VISIBLE);
-
-            TextView t1 = (TextView) findViewById(R.id.position1);
-            t1.setText("no user found");
+                });
+            }else{
+                foundUser.setVisibility(View.GONE);
+                Toast.makeText(context, "No user with that username found",
+                        Toast.LENGTH_LONG).show();
+            }
         }
+
+    private boolean isInternetAvailable() {
+        ConnectivityManager conManager =
+                (ConnectivityManager)
+                        getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()){
+            return true;
+        }
+        return false;
     }
 }
+

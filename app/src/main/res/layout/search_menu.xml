@@ -7,7 +7,6 @@
     android:background="@color/colorForeground"
     android:id="@+id/search">
 
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:title="yooo"
@@ -20,96 +19,160 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <TableLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/userFound"
+    <!--<TableLayout-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:id="@+id/userFound"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:shrinkColumns="*"-->
+        <!--android:stretchColumns="*"-->
+        <!--android:layout_below="@+id/toolbar"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:visibility="gone">-->
+
+        <!--<TableRow-->
+            <!--android:id="@+id/row1"-->
+            <!--android:layout_height="500dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:elevation="2dp"-->
+            <!--android:background="@color/colorForeground">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/position1"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingBottom="10dp"-->
+                <!--android:paddingTop="10dp"-->
+                <!--android:textSize="30sp"-->
+                <!--android:text="Result"-->
+                <!--android:textColor="@color/colorPrimary"-->
+                <!--android:layout_marginLeft="1dp"-->
+                <!--android:gravity="center"/>-->
+
+        <!--</TableRow>-->
+        <!--<TableRow-->
+            <!--android:id="@+id/row2"-->
+            <!--android:layout_height="500dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:elevation="2dp"-->
+            <!--android:background="@color/colorBackground">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/name"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingBottom="10dp"-->
+                <!--android:paddingTop="10dp"-->
+                <!--android:textSize="10sp"-->
+                <!--android:text=" "-->
+                <!--android:textColor="@color/primary_text_material_dark"-->
+                <!--android:layout_marginLeft="1dp"-->
+                <!--android:gravity="center"/>-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/level"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingBottom="10dp"-->
+                <!--android:paddingTop="10dp"-->
+                <!--android:textSize="10sp"-->
+                <!--android:text=" "-->
+                <!--android:textColor="@color/primary_text_material_dark"-->
+                <!--android:layout_marginLeft="1dp"-->
+                <!--android:gravity="center"/>-->
+
+        <!--</TableRow>-->
+        <!--<TableRow-->
+            <!--android:id="@+id/row3"-->
+            <!--android:layout_height="500dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:elevation="2dp"-->
+            <!--android:background="@color/colorBackground">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/average"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingBottom="10dp"-->
+                <!--android:paddingTop="10dp"-->
+                <!--android:textSize="10sp"-->
+                <!--android:text=" "-->
+                <!--android:textColor="@color/primary_text_material_dark"-->
+                <!--android:layout_marginLeft="1dp"-->
+                <!--android:gravity="center"/>-->
+
+        <!--</TableRow>-->
+
+    <!--</TableLayout>-->
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:shrinkColumns="*"
-        android:stretchColumns="*"
+        android:id="@+id/foundUser"
         android:layout_below="@+id/toolbar"
-        android:layout_marginTop="10dp"
-        android:visibility="gone">
-
-        <TableRow
-            android:id="@+id/row1"
-            android:layout_height="500dp"
+        android:visibility="gone"
+        android:padding="10sp">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:elevation="2dp"
-            android:background="@color/colorForeground">
+            android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/position1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:textSize="30sp"
-                android:text="Result"
+                android:id="@+id/search_name"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:textColor="@color/greyLight"
+                android:textSize="15sp"
+                android:layout_marginTop="10sp"
+                android:layout_marginLeft="10sp"
+                android:textStyle="italic"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/search_level"
+                android:layout_below="@+id/search_name"
+                android:textSize="20sp"
+                android:layout_marginTop="10sp"
+                android:layout_marginLeft="10sp"
+                android:textColor="@color/greyLight"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/search_average"
+                android:layout_below="@+id/search_level"
+                android:textSize="15sp"
+                android:layout_marginTop="5sp"
+                android:layout_marginLeft="10sp"
+                android:textColor="@color/greyLight"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/search_points"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:textColor="@color/colorPrimary"
-                android:layout_marginLeft="1dp"
-                android:gravity="center"/>
-
-        </TableRow>
-        <TableRow
-            android:id="@+id/row2"
-            android:layout_height="500dp"
-            android:layout_width="match_parent"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:elevation="2dp"
-            android:background="@color/colorBackground">
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
+                android:layout_marginBottom="20sp"
+                android:textSize="30sp"
+                />
+            <Button
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:textSize="10sp"
-                android:text=" "
-                android:textColor="@color/primary_text_material_dark"
-                android:layout_marginLeft="1dp"
-                android:gravity="center"/>
+                android:background="@color/colorPrimary"
+                android:textColor="@color/colorForeground"
+                android:id="@+id/search_raceButton"
+                android:layout_marginTop="20sp"
+                android:layout_below="@id/search_average"/>
 
-            <TextView
-                android:id="@+id/level"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:textSize="10sp"
-                android:text=" "
-                android:textColor="@color/primary_text_material_dark"
-                android:layout_marginLeft="1dp"
-                android:gravity="center"/>
-
-        </TableRow>
-        <TableRow
-            android:id="@+id/row3"
-            android:layout_height="500dp"
-            android:layout_width="match_parent"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:elevation="2dp"
-            android:background="@color/colorBackground">
-
-            <TextView
-                android:id="@+id/average"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:textSize="10sp"
-                android:text=" "
-                android:textColor="@color/primary_text_material_dark"
-                android:layout_marginLeft="1dp"
-                android:gravity="center"/>
-
-        </TableRow>
-
-    </TableLayout>
-
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
     </RelativeLayout>

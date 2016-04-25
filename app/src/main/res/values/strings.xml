@@ -91,6 +91,21 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="tutorialText">
+        "CompetiFit provides an exciting and more competitive way to run. Below are some key functionalities of the application:\n\n"
+        "1.Running\n"
+        "After loggin in you can go to the running screen by simply clicking on the floating action button on the bottom left corner of the screen.
+        After completing the run you will be given points\n\n"
+        "Racing\n"
+        "You can send a race challenge to a user within a league by clicking on the race button below the users league inormation on the league screen.
+        You can also race any user within CompetiFit by going to the race screen and selecting the 'search for users' buttin.
+        In the search screen you an enter the user's username and can click on the race button of the results to send the user a race challenge.\n\n"
+        "How do points work?\n"
+        "How do levels work?\n"
+        "How do races work?\n"
+        "What is the league?\n"
+
+    </string>
     <string name="title_activity_tutorial">Tutorial</string>
     <string name="title_activity_user_main">UserMain</string>
     <string name="title_activity_main2">Main2Activity</string>

@@ -13,6 +13,7 @@ package com.project.saadadeel.CompetiFit;
         import android.support.v4.app.NavUtils;
         import android.support.v7.app.AppCompatActivity;
         import android.support.v7.widget.Toolbar;
+        import android.util.Base64;
         import android.view.LayoutInflater;
         import android.view.MenuItem;
         import android.view.View;
@@ -27,6 +28,7 @@ package com.project.saadadeel.CompetiFit;
         import com.project.saadadeel.CompetiFit.Models.Races;
         import com.project.saadadeel.CompetiFit.Models.User;
         import com.project.saadadeel.CompetiFit.connection.DBConnect;
+        import com.project.saadadeel.CompetiFit.connection.DBResponse;
 
         import org.json.JSONException;
         import org.json.JSONObject;
@@ -36,7 +38,7 @@ package com.project.saadadeel.CompetiFit;
 /**
  * Created by hp1 on 21-01-2015.
  */
-public class profile extends AppCompatActivity {
+public class profile extends AppCompatActivity implements DBResponse{
     SharedPreferences sharedPreferences;
     User user;
     Gson gson = new Gson();
@@ -81,48 +83,44 @@ public class profile extends AppCompatActivity {
 
         TextView name = (TextView) findViewById(R.id.profile_name);
         name.setText("Name : "+ this.user.getUserFirstName() + " " + this.user.getUserLastName());
-
         TextView runs= (TextView) findViewById(R.id.profile_runs);
-        runs.setText("Total runs : " + this.user.getRuns().size());
-
+        runs.setText("Total Runs : " + this.user.getRuns().size());
         TextView races = (TextView) findViewById(R.id.profile_races);
-        races.setText("Username : " + this.user.getRaces().size());
-
-        EditText oldPassword = (EditText) findViewById(R.id.profile_password_current);
-        final String password = oldPassword.getText().toString();
-
-        EditText newPasswordEdit = (EditText) findViewById(R.id.profile_password_new);
-        final String newPassword = newPasswordEdit.getText().toString();
-
-        EditText repeatPasswordEdit= (EditText) findViewById(R.id.profile_password_new_repeat);
-        final String repeatPassword = repeatPasswordEdit.getText().toString();
-
+        races.setText("Total Races: " + this.user.getRaces().size());
         Button button = (Button) findViewById(R.id.change_password);
+
+        final DBConnect db = new DBConnect(token);
+        db.delegate = this;
+
         button.setOnClickListener(new View.OnClickListener() {
             boolean raceSent = false;
 
             public void onClick(View v) {
                 JSONObject object = new JSONObject();
-                if(!password.equals(user.getUserPassword())){
+
+                EditText oldPassword = (EditText) findViewById(R.id.profile_password_current);
+                String currentPassword = oldPassword.getText().toString();
+                EditText newPasswordEdit = (EditText) findViewById(R.id.profile_password_new);
+                String newPassword = newPasswordEdit.getText().toString();
+                EditText repeatPasswordEdit = (EditText) findViewById(R.id.profile_password_new_repeat);
+                String repeatPassword = repeatPasswordEdit.getText().toString();
+
+                if (!currentPassword.trim().equals(user.getUserPassword())) {
+                    System.out.println("HELLOOOOOO" + currentPassword);
                     Toast.makeText(context, "Old Password Incorrect",
                             Toast.LENGTH_LONG).show();
-                }else if(newPassword.equals(repeatPassword)){
+                } else if (!newPassword.equals(repeatPassword)) {
                     Toast.makeText(context, "Passwords do not match",
                             Toast.LENGTH_LONG).show();
-                }else{
+                } else {
                     try {
-                        object.put("newPassword", newPassword);
+                        object.put("password", newPassword);
                         object.put("username", user.getUsername());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if (isNetworkAvailable()) {
-                        DBConnect db = new DBConnect(object, token);
-                        db.post("/passwordChange");
-                        Toast.makeText(context, "Password Changed",
-                                Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(context, UserMain.class);
-                        context.startActivity(intent);
+                    if (isInternetAvailable()) {
+                        db.post("/user/changePassword", object);
                     } else {
                         Toast.makeText(context, "No internet connection available",
                                 Toast.LENGTH_LONG).show();
@@ -132,11 +130,31 @@ public class profile extends AppCompatActivity {
         });
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    private boolean isInternetAvailable() {
+        ConnectivityManager conManager =
+                (ConnectivityManager)
+                        getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()){
+            return true;
+        }
+        return false;
     }
 
+    @Override
+    public void processFinish(String data) {
+        EditText newPasswordEdit = (EditText) findViewById(R.id.profile_password_new);
+        String newPassword = newPasswordEdit.getText().toString();
+
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        String credentials = this.user.getUsername() + ":" + newPassword;
+        String token = Base64.encodeToString(credentials.getBytes(), Base64.DEFAULT);
+        prefsEditor.putString("TOKEN", token);
+        prefsEditor.commit();
+
+        Toast.makeText(context, "Password Changed",
+                Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(context, UserMain.class);
+        context.startActivity(intent);
+    }
 }

@@ -41,17 +41,6 @@ public class runRVA extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.run_card, parent, false);
             return new RunViewHolder(v);
         }
-//        if(viewType == TYPE_HEADER)
-//        {
-//            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.perf_header, parent, false);
-//            return  new Header(v);
-//        }
-//        else if(viewType == TYPE_ITEM)
-//        {
-//            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.run_card, parent, false);
-//            return new RunViewHolder(v);
-//        }
-//        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
     }
 
     @Override

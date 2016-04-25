@@ -1,25 +1,33 @@
 package com.project.saadadeel.CompetiFit;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.RunTracker.Pop;
 import com.project.saadadeel.CompetiFit.Models.Races;
 import com.project.saadadeel.CompetiFit.Models.User;
 import com.project.saadadeel.CompetiFit.ViewGenerator.ViewGenerator;
+import com.project.saadadeel.CompetiFit.connection.DBResponse;
 
 import org.json.JSONException;
 
@@ -35,26 +43,32 @@ public class Race extends Fragment {
     boolean isRecieved = false;
     boolean isActive = false;
     boolean isComplete = false;
+    SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.race, container, false);
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            userRaces = bundle.getParcelableArrayList("userRaces");
-            this.u = bundle.getParcelable("User");
-        }
-        try {
-            populate(v, this.userRaces);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        this.sharedPreferences = getActivity().getSharedPreferences("myPref", Context.MODE_PRIVATE);
+        String data = this.sharedPreferences.getString("user", "");
+        this.u = new Gson().fromJson(data, User.class);
+        this.userRaces = u.getRaces();
+        if(isInternetAvailable()) {
+            try {
+                populate(v, this.userRaces);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else{
+            CardView messageCard = (CardView) v.findViewById(R.id.noInternetCard);
+            messageCard.setVisibility(View.VISIBLE);
+            RelativeLayout raceLayout = (RelativeLayout) v.findViewById(R.id.raceLayout);
+            raceLayout.setVisibility(View.GONE);
         }
         return v;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void populate(View v, final ArrayList<Races> r) throws JSONException {
-//        TableLayout table = new TableLayout(getActivity());
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             this.u = bundle.getParcelable("User");
@@ -77,7 +91,7 @@ public class Race extends Fragment {
         }
 
         if(isPending){
-            TextView text = (TextView) v.findViewById(R.id.noCompletedChallenges);
+            TextView text = (TextView) v.findViewById(R.id.noSentChallenges);
             text.setVisibility(View.GONE);
         }
         if(isRecieved){
@@ -93,9 +107,15 @@ public class Race extends Fragment {
             text.setVisibility(View.GONE);
         }
     }
-    public void addRowsToTable(ArrayList<TableRow> rows, TableLayout table){
-        for(TableRow row: rows){
-            table.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+
+    private boolean isInternetAvailable() {
+        ConnectivityManager conManager =
+                (ConnectivityManager)
+                        getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()){
+            return true;
         }
+        return false;
     }
 }

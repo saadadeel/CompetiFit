@@ -17,71 +17,43 @@ import com.project.saadadeel.CompetiFit.profile;
  */
 public class ViewPagerAdapter extends FragmentStatePagerAdapter{
 
-    CharSequence Titles[];
-    int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
-    User user;
+    CharSequence tabTitles[];
+    int numberOfTabs;
 
-    Bundle args = new Bundle();
-
-    // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapter(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb, User user) {
+    public ViewPagerAdapter(FragmentManager fm,CharSequence titles[], int numbOfTabs) {
         super(fm);
-
-        this.Titles = mTitles;
-        this.NumbOfTabs = mNumbOfTabsumb;
-        setArgs(user);
+        this.tabTitles = titles;
+        this.numberOfTabs = numbOfTabs;
     }
 
-    public void setArgs(User newU){
-        this.user = newU;
-        args.putParcelable("User", user);
-        args.putParcelableArrayList("userRuns", user.getRuns());
-        args.putParcelableArrayList("userLeague", user.getleague());
-        args.putParcelableArrayList("userRaces", user.getRaces());
-    }
-
-    //This method return the fragment for the every position in the View Pager
     @Override
     public Fragment getItem(int position) {
 
-        if(position == 0 && user!=null) // if the position is 0 we are returning the First tab
+        if(position == 0)
         {
             LeagueTable ltView = new LeagueTable();
-            ltView.setArguments(this.args);
             return ltView;
         }
         if (position == 1)
         {
             Performance performanceView = new Performance();
-            performanceView.setArguments(this.args);
             return performanceView;
         }
         else
         {
             Race rView = new Race();
-            rView.setArguments(this.args);
             return rView;
         }
     }
 
-    // This method return the titles for the Tabs in the Tab Strip
-
     @Override
     public CharSequence getPageTitle(int position) {
-        return Titles[position];
+        return tabTitles[position];
     }
-
-    // This method return the Number of tabs for the tabs Strip
 
     @Override
     public int getCount() {
-        return NumbOfTabs;
+        return numberOfTabs;
     }
 
-    public void update(User u){
-        this.user = u;
-        this.args.putParcelable("User", user);
-        this.args.putParcelableArrayList("userRaces", user.getRaces());
-        this.args.putParcelableArrayList("userRuns", user.getRuns());
-    }
 }

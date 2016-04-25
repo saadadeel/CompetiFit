@@ -41,12 +41,14 @@ public class User implements Parcelable{
 
     }
 
-    public User (String uname, String password, String fName, String lName, int level){
+    public User (String uname, String password, String fName, String lName, int level, double averageDistance, double averageSpeed){
         this.username = uname;
         this.firstName = fName;
         this.lastName = lName;
         this.password = password;
         this.userLevel = level;
+        this.averageDistance = averageDistance;
+        this.averageSpeed = averageSpeed;
     }
 
     public User(){}
@@ -128,9 +130,6 @@ public class User implements Parcelable{
         }
         return 0.0;
     }
-
-
-
         //Setters
     public void setUserScore(int addScore){this.userScore += addScore;}
     public void setUsername(String un){this.username = un;}
@@ -208,17 +207,18 @@ public class User implements Parcelable{
         double avgDist = this.getAverageDist();
         double avgSpeed = this.getAverageSpeed();
 
-        if(this.runs.size()>=4) {
-            this.userLevel = (int)((avgDist*avgSpeed)/10);
+        int level = (int)((avgDist*avgSpeed)/10);
+
+        if(level<1){
+            level = 1;
         }
 
-        int level = (int)((avgDist*avgSpeed)/10);
         if(level != this.userLevel){
             this.oldUserLevel = this.userLevel;
             this.userLevel = level;
         }else{
             this.userLevel = level;
-            this.userLevel = 0;
+            this.oldUserLevel = 0;
         }
     }
 

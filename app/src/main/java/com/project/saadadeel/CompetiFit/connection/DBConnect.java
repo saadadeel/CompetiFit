@@ -31,7 +31,7 @@ public class DBConnect implements DBResponse{
     public User user;
     public DBResponse delegate = null;
 
-    boolean haveUser;
+    boolean haveUser = false;
     String params;
     boolean taskDone = false;
     JSONObject custom;
@@ -45,36 +45,40 @@ public class DBConnect implements DBResponse{
 
     public DBConnect(){}
 
-    public DBConnect(User u, String token) {
+    public DBConnect(String token){
+        this.token = token;
+    }
+
+    public void post(String params, User u){
+        this.setParams(params);
         this.user = u;
         this.haveUser = true;
 
-        this.token = token;
+        new post().execute();
     }
-    public DBConnect(JSONObject o, String token){
-        this.custom = o;
-        this.haveObject = true;
 
-        this.token = token;
+    public void post(String params, JSONObject o){
+        this.setParams(params);
+        this.custom = o;
+        this.haveObject= true;
+
+        new post().execute();
     }
-    public DBConnect(Races race, String token){
+
+    public void post(String params, Runs run){
+        this.setParams(params);
+        this.run = run;
+        this.haveRun = true;
+
+        new post().execute();
+    }
+
+    public void post(String params, Races race){
+        this.setParams(params);
         this.race = race;
         this.haveRace = true;
 
-        this.token = token;
-    }
-
-    public DBConnect(Runs r, String token){
-        this.run = r;
-        this.haveRun = true;
-
-        this.token = token;
-    }
-
-    public User post(String params){
-        this.setParams(params);
         new post().execute();
-        return this.user;
     }
 
     public void setParams(String p){
@@ -122,23 +126,20 @@ public class DBConnect implements DBResponse{
 
         @Override
         protected String doInBackground(String... params) {
-            System.out.println("//////////////////////////////////////");
             String result= null;
             try {
-               result = postData("http://178.62.68.172:32904" + getParams(), 8000);
+               result = postData("http://178.62.68.172:32917" + getParams(), 8000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("CONNECTED to Sign Up");
-            System.out.println("///////////////// ");
-            System.out.println(result);
-
             return result;
         }
 
         protected void onPostExecute(String result){
             System.out.println("Task is Done");
-            delegate.processFinish(result);
+            if(delegate!=null) {
+                delegate.processFinish(result);
+            }
         }
 
         public String postData(String u, int timeout) throws IOException {
@@ -180,7 +181,6 @@ public class DBConnect implements DBResponse{
                     OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
                     wr.write(h.toJson(run));
                     wr.flush();
-                    System.out.println("This is a run model");
                 }
 
                 int status = urlConnection.getResponseCode();
@@ -195,9 +195,7 @@ public class DBConnect implements DBResponse{
                             sb.append(line+"\n");
                         }
                         br.close();
-                        System.out.print(sb.toString());
                         return sb.toString();
-
                     case 400:
                         return " ";
                 }

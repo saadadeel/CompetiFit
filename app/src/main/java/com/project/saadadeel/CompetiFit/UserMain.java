@@ -1,18 +1,12 @@
 
 package com.project.saadadeel.CompetiFit;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,16 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.project.saadadeel.CompetiFit.Models.Races;
 import com.project.saadadeel.CompetiFit.Models.Runs;
-import com.project.saadadeel.CompetiFit.Models.minimalUser;
 import com.project.saadadeel.CompetiFit.RunTracker.Pop;
 import com.project.saadadeel.CompetiFit.ViewGenerator.ViewPagerAdapter;
 import com.project.saadadeel.CompetiFit.Models.User;
@@ -37,34 +25,20 @@ import com.project.saadadeel.CompetiFit.connection.DBConnect;
 import com.project.saadadeel.CompetiFit.connection.DBGetter;
 import com.project.saadadeel.CompetiFit.connection.DBResponse;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class UserMain extends AppCompatActivity implements DBResponse {
-    Toolbar toolbar;
     ViewPager pager;
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
     CharSequence Titles[] = {"League", "Activity", "Races"};
     int Numboftabs = 3;
     Timer timer = new Timer();
-    public String myPref = "myPref";
-    Menu menu;
-
 
     String username;
     User usr;
-    boolean isRefresher = false;
     boolean isDataSynced = true;
 
     Context context;
@@ -77,23 +51,20 @@ public class UserMain extends AppCompatActivity implements DBResponse {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_user_main);
-        Intent intent = getIntent();
-
-        context = this;
-        this.sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
-        String username = sharedPreferences.getString("USERNAME",null);
-        setUsername(username);
-        String json = this.sharedPreferences.getString("user", "");
-        this.token= this.sharedPreferences.getString("TOKEN", "");
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        context = this;
 
-        if(isNetworkAvailable()) {
-            DBGetter dbGetter = new DBGetter("/user/details/" + getUsername(), this.token);
+        this.sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+        this.token= this.sharedPreferences.getString("TOKEN", "");
+        this.username = sharedPreferences.getString("USERNAME", "");
+
+        if(isInternetAvailable()) {
+            DBGetter dbGetter = new DBGetter("/user/" + getUsername(), this.token);
             dbGetter.delegate = this;
             dbGetter.execute();
         }else{
+            String json = this.sharedPreferences.getString("user", "");
             this.usr = gson.fromJson(json, User.class);
             this.isDataSynced = false;
             setAdapter();
@@ -101,9 +72,9 @@ public class UserMain extends AppCompatActivity implements DBResponse {
         initiateRefresher();
     }
 
-
     public void goToSearch(View view) {
         Intent intent = new Intent(this, search.class);
+        intent.putExtra("username", username);
         startActivity(intent);
     }
 
@@ -111,38 +82,29 @@ public class UserMain extends AppCompatActivity implements DBResponse {
         TimerTask secondCounter = new TimerTask() {
             @Override
             public void run() {
-                if (isNetworkAvailable()) {
-                    isRefresher = true;
-                    System.out.println("Here is the sync status " + usr.getSynced());
-                    if (!isDataSynced) {
-                        System.out.println("data is being synced");
-                        syncRuns();
-                        isDataSynced = true;
-                        usr.setSynced(0);
-                    } else {
-                        DBGetter dbGetter = new DBGetter("/user/details/" + getUsername(), token);
-                        dbGetter.delegate = UserMain.this;
-                        dbGetter.execute();
-                    }
-                }
+            if (isInternetAvailable()) {
+                DBGetter dbGetter = new DBGetter("/user/" + getUsername());
+                dbGetter.delegate = UserMain.this;
+                dbGetter.execute();
+            }
             }
         };
-        timer.scheduleAtFixedRate(secondCounter, 3 * 60 * 1000, 3 * 60 * 1000);
+        timer.scheduleAtFixedRate(secondCounter, 30 * 60 * 1000, 30 * 60 * 1000);
     }
 
     public void refresh() {
-        final DBGetter dbGetter = new DBGetter("/user/details/" + getUsername(),this.token);
+        final DBGetter dbGetter = new DBGetter("/user/" + getUsername(),this.token);
         dbGetter.delegate = this;
         System.out.println("The user sync is : " + usr.getSynced());
 
-        if (isNetworkAvailable()) {
+        if (isInternetAvailable()) {
             if (!isDataSynced) {
                 System.out.println("update /////////////////// yo");
                 this.syncRuns();
                 usr.setSynced(0);
-            } else {
-                dbGetter.execute();
             }
+                dbGetter.execute();
+
         } else {
             Toast.makeText(this, "No Internet Connection Available",
                     Toast.LENGTH_LONG).show();
@@ -154,6 +116,12 @@ public class UserMain extends AppCompatActivity implements DBResponse {
         finish();
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        System.out.println("onResume");
+    }
+
     public void syncRuns() {
         for (Runs run : this.usr.getRuns()) {
             System.out.println("Sync status for this run: " + run.getIsSynced());
@@ -161,8 +129,8 @@ public class UserMain extends AppCompatActivity implements DBResponse {
                 run.setIsSynced(0);
                 Runs r = new Runs(run.getDistance(), run.getSpeed(), usr.getUsername());
                 System.out.println("Run synced");
-                DBConnect db = new DBConnect(r,token);
-                db.post("/activity/Run");
+                DBConnect db = new DBConnect(token);
+                db.post("/user/"+this.usr.getUsername()+"/run",r);
             }
         }
     }
@@ -182,24 +150,19 @@ public class UserMain extends AppCompatActivity implements DBResponse {
                 Intent i = new Intent(this, profile.class);
                 startActivity(i);
                 return true;
-            case R.id.action_about:
-                // Settings option clicked.
-                return true;
             case R.id.action_tutorial:
-                // Settings option clicked.
+                Intent tutorialIntent = new Intent(this, Tutorial.class);
+                startActivity(tutorialIntent);
                 return true;
             case R.id.action_logout:
                 SharedPreferences.Editor editor = this.sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
-                System.out.println("logout");
-                Intent intent = new Intent(this, MainActivity.class);
+
+                Intent intent = new Intent(this, login.class);
                 startActivity(intent);
                 return true;
             case R.id.action_refresh:
-                this.refresh();
-                return true;
-            case R.id.action_search:
                 this.refresh();
                 return true;
         }
@@ -219,30 +182,18 @@ public class UserMain extends AppCompatActivity implements DBResponse {
     }
 
     public void setAdapter() {
-        if (isRefresher) {
-            adapter.setArgs(usr);
-        } else {
-            // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-            adapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, Numboftabs, usr);
-
-            // Assigning ViewPager View and setting the adapter
+            adapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, Numboftabs);
             pager = (ViewPager) findViewById(R.id.pager);
             pager.setAdapter(adapter);
 
-            // Assiging the Sliding Tab Layout View
             tabs = (SlidingTabLayout) findViewById(R.id.tabs);
             tabs.setDistributeEvenly(true);
-
-
-            // Setting Custom Color for the Scroll bar indicator of the Tab View
             tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
                 @Override
                 public int getIndicatorColor(int position) {
                     return getResources().getColor(R.color.colorForeground);
                 }
             });
-
-            // Setting the ViewPager For the SlidingTabsLayout
             tabs.setViewPager(pager);
 
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -250,34 +201,33 @@ public class UserMain extends AppCompatActivity implements DBResponse {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(UserMain.this, Pop.class);
-//                    intent.putExtra("user", usr);
-//                    intent.putExtra("runs", usr.getRuns());
-//                    intent.putExtra("race", usr.getRaces());
-//                    intent.putExtra("league", usr.getUserLeague());
                     intent.putExtra("isRace", false);
                     UserMain.this.finish();
                     startActivity(intent);
                 }
             });
-        }
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    private boolean isInternetAvailable() {
+        ConnectivityManager conManager =
+                (ConnectivityManager)
+                        getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()){
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void processFinish(String data) {
         User u = new Gson().fromJson(data, User.class);
         this.setUser(u);
-        setAdapter();
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
 
         String json = gson.toJson(u);
         prefsEditor.putString("user", json);
         prefsEditor.commit();
+        setAdapter();
     }
 }

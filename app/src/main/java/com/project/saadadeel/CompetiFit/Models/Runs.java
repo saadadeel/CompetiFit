@@ -108,13 +108,16 @@ public class Runs implements Parcelable{
         ArrayList<Double> dist = new ArrayList<Double>();
         ArrayList<Double> speed = new ArrayList<Double>();
 
-        setBasicPoints(user);
-        setBonusPoints(userRuns);
+        if(this.getDistance()<10 || this.getSpeed()<1/3.6){
+            this.score = 0;
+        }else{
+            setBasicPoints(user);
+            setBonusPoints(userRuns);
+        }
     }
 
     private void setBasicPoints(User user){
         if(user.getAverageDist()< this.getKMDist() && user.getAverageSpeed()<this.getKMperHrSpeed()){
-            System.out.println("/////// here in basic");
             this.score += 3;
         }
     }
@@ -130,20 +133,17 @@ public class Runs implements Parcelable{
         if (userRuns != null && userRuns.size() > 2) {
             for (int i = 0; i < counter; i++) {
                 if (userRuns.get(i).getDistance() > userRuns.get(i + 1).getDistance() && userRuns.get(i).getSpeed() > userRuns.get(i + 1).getSpeed()) {
-                    System.out.println("/////// here");
                     System.out.println(this.score);
                     this.score += 4;
                     if (i == 4) {
                         this.score += 10;
                     }
                 } else {
-                    System.out.println("******* yessss what");
                     break;
                 }
             }
         }
     }
-
 
     public void setDate(String date){
         this.date = date;

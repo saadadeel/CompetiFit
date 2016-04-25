@@ -110,37 +110,33 @@
         android:ellipsize="end"
         android:textColorHint="@color/greyLight"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/heightInput"
-        android:layout_marginTop="40dp"
-        android:layout_below="@+id/lnameInput"
-        android:layout_centerHorizontal="true"
-        android:hint="Last Name"
-        android:ellipsize="end"
-        android:textColorHint="@color/greyLight"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="I can run..."
         android:id="@+id/message"
-        android:layout_below="@+id/heightInput"
+        android:layout_below="@+id/lnameInput"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp" />
-
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner"
+        android:backgroundTint="@android:color/darker_gray"
+        android:id="@+id/distanceInput"
         android:layout_below="@+id/message"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:entries="@array/distance"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Km"
+        android:id="@+id/inputKm"
+        android:layout_below="@+id/distanceInput"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -148,26 +144,33 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="in"
         android:id="@+id/message2"
-        android:layout_below="@+id/spinner"
+        android:layout_below="@+id/inputKm"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp" />
-
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner1"
+        android:backgroundTint="@android:color/darker_gray"
+        android:id="@+id/timeInput"
         android:layout_below="@+id/message2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:entries="@array/time"/>
-
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="minutes"
+        android:id="@+id/inputMinutes"
+        android:layout_below="@+id/timeInput"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next"
         android:id="@+id/nextPageButton"
-        android:layout_below="@+id/spinner1"
+        android:layout_below="@+id/inputMinutes"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:onClick="nextPage"/>

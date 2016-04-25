@@ -1,6 +1,8 @@
 package com.project.saadadeel.CompetiFit;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +18,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.project.saadadeel.CompetiFit.Models.Runs;
 import com.project.saadadeel.CompetiFit.Models.User;
 import com.project.saadadeel.CompetiFit.Models.minimalUser;
@@ -31,45 +34,25 @@ import java.util.ArrayList;
 public class Performance extends Fragment {
     User user;
     ArrayList<Runs> userRuns;
+    public SharedPreferences sharedPreferences;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.performance,container,false);
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            this.user = bundle.getParcelable("User");
-            if (bundle != null) {this.userRuns = bundle.getParcelableArrayList("userRuns");}
-        }
-//        populate(v);
+        View v = inflater.inflate(R.layout.performance, container, false);
+//        Bundle bundle = this.getArguments();
+        this.sharedPreferences = getActivity().getSharedPreferences("myPref", Context.MODE_PRIVATE);
+
+//        if (bundle != null) {
+//            this.user = bundle.getParcelable("User");
+        String data = this.sharedPreferences.getString("user", "");
+        this.user = new Gson().fromJson(data, User.class);
+        this.userRuns = this.user.getRuns();
+//        }
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.rvRun);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
+
         runRVA adapter = new runRVA(this.userRuns, user);
         rv.setAdapter(adapter);
         return v;
     }
-
-//    public void populate(View view){
-//        TextView score = (TextView) view.findViewById(R.id.score);
-//        TextView level = (TextView) view.findViewById(R.id.level);
-//        TextView average = (TextView) view.findViewById(R.id.KmAndSpeed);
-//        score.setText(String.valueOf(this.user.getUserScore()) + "pts");
-//        level.setText("level " + this.user.getUserLevel());
-//        average.setText(this.user.getAverageDist() + " km @ " + this.user.getAverageSpeed() + "km/hr");
-//
-////        setRunTable(view, this.userRuns);
-//    }
-
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//    public void setRunTable(View v, ArrayList<Runs> r){
-//        TableLayout table = (TableLayout) v.findViewById(R.id.runs);
-//
-//        for (Runs runs: r) {
-//            ViewGenerator vg = new ViewGenerator(v,getActivity(),this.user);
-//            ArrayList<TableRow> rows = vg.populateRunView(runs);
-//
-//            table.addView(rows.get(0));
-//            table.addView(rows.get(1));
-//            table.addView(rows.get(2));
-//        }
-//    }
 }

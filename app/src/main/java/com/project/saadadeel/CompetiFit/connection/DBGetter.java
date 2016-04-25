@@ -23,13 +23,18 @@ import java.util.logging.Logger;
 public class DBGetter extends AsyncTask<String, Void, String> {
     String data;
     String params;
+
     public DBResponse delegate = null;
+
     User usr;
     String token = " ";
 
     public DBGetter(String params, String token) {
         this.params = params;
         this.token = token;
+    }
+    public DBGetter(String params){
+        this.params = params;
     }
     private String getParams(){
         return this.params;
@@ -39,12 +44,10 @@ public class DBGetter extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         String data = null;
         try {
-            data = getData("http://178.62.68.172:32904" + getParams(), 3000);
+            data = getData("http://178.62.68.172:32917" + getParams(), 10 * 1000);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("CONNECTED to DBGetter");
-//        this.usr = new Gson().fromJson(data, User.class);
         return data;
     }
 
@@ -53,8 +56,6 @@ public class DBGetter extends AsyncTask<String, Void, String> {
     }
 
     public String getData(String u, int timeout) throws IOException {
-//
-//        String credentials = usr.getUsername()+ ":" + usr.getUserPassword();
 
         String Auth ="Basic "+ token;
         System.out.println(Auth);
@@ -70,30 +71,24 @@ public class DBGetter extends AsyncTask<String, Void, String> {
             urlConnection.setConnectTimeout(timeout);
             urlConnection.setReadTimeout(timeout);
             urlConnection.connect();
-            int status = urlConnection.getResponseCode();
+            int responseCode = urlConnection.getResponseCode();
 
-            switch (status) {
-                case 200:
+                if(responseCode==200){
                     BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                     StringBuilder sb = new StringBuilder();
                     String line;
+
                     while ((line = br.readLine()) != null) {
                         sb.append(line+"\n");
                     }
                     br.close();
-                    System.out.println(sb);
+                    System.out.print(sb.toString());
                     return sb.toString();
-
-                case 400:
-                    BufferedReader br1 = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder sb1 = new StringBuilder();
-                    String line1;
-                    while ((line1 = br1.readLine()) != null) {
-                        sb1.append(line1+"\n");
-                    }
-                    br1.close();
-                    return sb1.toString();
-            }
+                }else if (responseCode==400){
+                    return "error";
+                }else{
+                    return "no data found";
+                }
 
         } catch (MalformedURLException ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);

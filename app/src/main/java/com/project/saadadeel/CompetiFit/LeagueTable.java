@@ -2,9 +2,12 @@ package com.project.saadadeel.CompetiFit;
 
         import android.content.Context;
         import android.content.SharedPreferences;
+        import android.net.ConnectivityManager;
+        import android.net.NetworkInfo;
         import android.os.Bundle;
         import android.support.annotation.Nullable;
         import android.support.v4.app.Fragment;
+        import android.support.v7.widget.CardView;
         import android.support.v7.widget.LinearLayoutManager;
         import android.support.v7.widget.RecyclerView;
         import android.view.LayoutInflater;
@@ -25,7 +28,7 @@ public class LeagueTable extends Fragment {
     ViewGenerator generator;
     User u;
     String token;
-    public SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
     Gson gson = new Gson();
     Context context;
 
@@ -34,10 +37,11 @@ public class LeagueTable extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.league_table, container, false);
         this.sharedPreferences = getActivity().getSharedPreferences("myPref", Context.MODE_PRIVATE);
-//        populate(v);
-        Bundle bundle = this.getArguments();
-        this.u = bundle.getParcelable("User");
-        ArrayList<minimalUser> mU = bundle.getParcelableArrayList("userLeague");
+
+        String data = this.sharedPreferences.getString("user", "");
+        this.u = new Gson().fromJson(data, User.class);
+        ArrayList<minimalUser> mU = this.u.getUserLeague();
+
         this.token = this.sharedPreferences.getString("TOKEN", "");
         this.context = getActivity();
 
@@ -47,31 +51,22 @@ public class LeagueTable extends Fragment {
 
         leagueRVA adapter = new leagueRVA(mU, u, context, this.token);
         rv.setAdapter(adapter);
+
+        if(!isInternetAvailable()){
+            CardView messageCard = (CardView) v.findViewById(R.id.noInternetCard);
+            messageCard.setVisibility(View.VISIBLE);
+            rv.setVisibility(View.GONE);
+        }
         return v;
     }
-
-    public void populate(View v){
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            this.sharedPreferences = getActivity().getSharedPreferences("myPref", Context.MODE_PRIVATE);
-            String json = this.sharedPreferences.getString("user", "");
-            User u = gson.fromJson(json, User.class);
-            this.generator = new ViewGenerator(v,getActivity(),u);
-
-            ArrayList<minimalUser> mU = bundle.getParcelableArrayList("userLeague");
-            RecyclerView rv = (RecyclerView) v.findViewById(R.id.rv);
-            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-            rv.setLayoutManager(llm);
-
-//            leagueRVA adapter = new leagueRVA(mU);
-//            rv.setAdapter(adapter);
-
-            setTable(v, mU);
+    private boolean isInternetAvailable() {
+        ConnectivityManager conManager =
+                (ConnectivityManager)
+                        getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()){
+            return true;
         }
-    }
-
-    public void setTable(View view, ArrayList<minimalUser> r) {
-        TableLayout table = (TableLayout) view.findViewById(R.id.tableLayout1);
-        generator.populateLeagueView(table, r);
+        return false;
     }
 }
